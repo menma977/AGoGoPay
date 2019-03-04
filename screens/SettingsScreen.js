@@ -6,7 +6,7 @@ export default class SettingsScreen extends React.Component {
     title: 'app.json',
   };
 
-  render() {
+  render () {
     /* Go ahead and delete ExpoConfigView and replace it with your
      * content, we just wanted to give you a quick view of your config */
     return <ExpoConfigView />;
