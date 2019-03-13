@@ -1,12 +1,7 @@
 import React from 'react';
 import { View, WebView, KeyboardAvoidingView } from 'react-native';
 import {
-    Container,
-    Content,
     Spinner,
-    Text,
-    Card,
-    CardItem,
     Body,
     Title,
     Header,
@@ -41,19 +36,22 @@ export default class WebViewTab extends React.Component {
                 <View style={ [ Styles.container ] }>
                     <Header style={ { backgroundColor: '#fbb5fd' } } >
                         <Body style={ { alignItems: 'flex-start' } }>
-                            <Button transparent onPress={ () => this.props.navigation.navigate( 'Main' ) } style={ { alignSelf: 'flex-start' } }>
-                                <Text>
-                                    <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } />
-                                </Text>
+                            <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
+                                <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
                             </Button>
                         </Body>
                         <Body style={ { alignItems: 'center' } }>
                             <Title>WEB</Title>
                         </Body>
+                        <Body style={ { alignItems: 'flex-end' } }></Body>
                     </Header>
+                    {/* set keyboard avoid view */ }
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
+                        {/* load Web View */ }
                         <WebView source={ { uri: 'https://www.agogopay.com/login' } } />
+                        {/* /load Web View */ }
                     </KeyboardAvoidingView>
+                    {/* /set keyboard avoid view */ }
                 </View>
             );
         }

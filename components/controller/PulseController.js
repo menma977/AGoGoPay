@@ -1,9 +1,14 @@
 import React from 'react';
-export default class LoginController extends React.Component {
-    async DataLogin ( setUsername, setPassword ) {
+export default class PulseController extends React.Component {
+    async Request ( setUsername, setCode, setPhoneNumber, setNominal, setType ) {
         var url, body, errorResponse;
-        url = "https://agogopay.com/api/login.php";
-        body = "a=ReqLogin" + "&username=" + setUsername + "&password=" + setPassword;
+        url = "https://agogopay.com/api/isipulsa.php";
+        body = "a=ReqPulsa" +
+            "&username=" + setUsername +
+            "&idlogin=" + setCode +
+            "&nohp=" + setPhoneNumber +
+            "&nominal=" + setNominal +
+            "&type=" + setType;
         errorResponse = { Status: 1, Pesan: 'Internet tidak setabil mohon ulangi lagi' };
         try {
             const response = await fetch( url, {
@@ -24,10 +29,18 @@ export default class LoginController extends React.Component {
         }
     }
 
-    async FinalLogin ( username, code ) {
+    async Pay ( setUsername, setCode, setPhoneNumber, setPayCode, setNominal, setFirstBalance, setPrice, setRemainingBalance ) {
         var url, body, errorResponse;
-        url = "https://agogopay.com/api/login.php";
-        body = "a=FinalLogin" + "&username=" + username + "&kode=" + code;
+        url = "https://agogopay.com/api/isipulsa.php";
+        body = "a=PayPulsa" +
+            "&username=" + setUsername +
+            "&idlogin=" + setCode +
+            "&nohp=" + setPhoneNumber +
+            "&kode=" + setPayCode +
+            "&nominal=" + setNominal +
+            "&saldoawal=" + setFirstBalance +
+            "&harga=" + setPrice +
+            "&sisasaldo=" + setRemainingBalance;
         errorResponse = { Status: 1, Pesan: 'Internet tidak setabil mohon ulangi lagi' };
         try {
             const response = await fetch( url, {

@@ -20,10 +20,12 @@ export default class App extends React.Component {
       );
     } else {
       return (
+        // set root from native base
         <Root style={ styles.container }>
           <StatusBar barStyle='default' />
           <AppNavigator />
         </Root>
+        // /set root from native base
       );
     }
   }
@@ -41,6 +43,7 @@ export default class App extends React.Component {
         // to remove this if you are not using it in your app
         'space-mono': require( './assets/fonts/SpaceMono-Regular.ttf' ),
       } ),
+      // set Robot from native base
       await Expo.Font.loadAsync( {
         'Roboto': require( 'native-base/Fonts/Roboto.ttf' ),
         'Roboto_medium': require( 'native-base/Fonts/Roboto_medium.ttf' ),

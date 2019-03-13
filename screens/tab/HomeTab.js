@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, AsyncStorage } from 'react-native';
 import {
     Container,
     Content,
@@ -13,6 +13,7 @@ import {
     Button,
     Icon
 } from 'native-base';
+import BalanceController from '../../components/controller/BalanceController';
 import Styles from '../../constants/Styles';
 
 export default class HomeTab extends React.Component {
@@ -20,10 +21,21 @@ export default class HomeTab extends React.Component {
         super( props );
         this.state = {
             isLoading: true,
+            balance: 0,
         }
     }
 
     async componentDidMount () {
+        this.setState( { isLoading: true } );
+        let setUsername = await AsyncStorage.getItem( 'username' );
+        let setCode = await AsyncStorage.getItem( 'code' );
+        let data = await BalanceController.prototype.GetBalance( setUsername, setCode );
+        if ( data.Status == 0 ) {
+            AsyncStorage.setItem( 'balance', String( data.Saldo ) );
+        } else {
+            AsyncStorage.setItem( 'balance', '0' );
+        }
+        this.setState( { balance: await AsyncStorage.getItem( 'balance' ) } );
         this.setState( { isLoading: false } );
     }
 
@@ -41,14 +53,21 @@ export default class HomeTab extends React.Component {
                 <Container>
                     <Content>
                         <Text>{ '\n' }</Text>
-                        <Button bordered success block onPress={ () => this.props.navigation.navigate( 'WebViewTab' ) }>
+                        {/* open Web View */ }
+                        <Button iconLeft success block onPress={ () => this.props.navigation.navigate( 'WebViewTab' ) } style={ { width: '85%', alignSelf: 'center' } }>
+                            <Icon type='MaterialIcons' name='account-circle' size={ 20 } />
                             <Text>My Account</Text>
+                        </Button>
+                        {/* /open Web View */ }
+                        <Text>{ '\n' }</Text>
+                        <Button info block style={ { width: '85%', alignSelf: 'center', textAlign: 'center' } } onPress={ this.componentDidMount.bind( this ) }>
+                            <Text style={ { fontSize: 20 } }>Rp { this.state.balance },00</Text>
                         </Button>
                         <Text>{ '\n' }</Text>
                         <Row>
                             <Col>
                                 <Body>
-                                    <Button iconLeft bordered success>
+                                    <Button iconLeft info>
                                         <Icon type='MaterialCommunityIcons' name='finance' size={ 20 } />
                                         <Text>Deposit</Text>
                                     </Button>
@@ -56,7 +75,7 @@ export default class HomeTab extends React.Component {
                             </Col>
                             <Col>
                                 <Body>
-                                    <Button iconLeft bordered success>
+                                    <Button iconLeft primary>
                                         <Icon type='FontAwesome' name='gamepad' size={ 20 } />
                                         <Text>Game</Text>
                                     </Button>
@@ -76,8 +95,10 @@ export default class HomeTab extends React.Component {
                                             <Card>
                                                 <CardItem>
                                                     <Body>
-                                                        <Image source={ require( '../../assets/images/icon/pulsa.png' ) }
-                                                            style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } } />
+                                                        <Button transparent onPress={ () => this.props.navigation.navigate( 'pulse' ) }>
+                                                            <Image source={ require( '../../assets/images/icon/pulsa.png' ) }
+                                                                style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } } />
+                                                        </Button>
                                                     </Body>
                                                 </CardItem>
                                             </Card>
