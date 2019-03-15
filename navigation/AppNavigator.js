@@ -5,6 +5,7 @@ import HomeTab from '../screens/tab/HomeTab';
 import WebViewTab from '../screens/tab/WebViewTab';
 import LoginScreen from '../screens/LoginScreen';
 import PulseScreen from '../screens/PulseScreen';
+import PLNScreen from '../screens/PLNScreen';
 
 export default createAppContainer( createSwitchNavigator( {
   // You could add another route here for authentication.
@@ -14,5 +15,6 @@ export default createAppContainer( createSwitchNavigator( {
   HomeTab: HomeTab,
   WebViewTab: WebViewTab,
 
-  pulse: PulseScreen
+  pulse: PulseScreen,
+  PLN: PLNScreen,
 } ) );

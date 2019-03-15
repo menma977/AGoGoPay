@@ -54,13 +54,16 @@ export default class HomeTab extends React.Component {
                     <Content>
                         <Text>{ '\n' }</Text>
                         {/* open Web View */ }
-                        <Button iconLeft success block onPress={ () => this.props.navigation.navigate( 'WebViewTab' ) } style={ { width: '85%', alignSelf: 'center' } }>
-                            <Icon type='MaterialIcons' name='account-circle' size={ 20 } />
+                        <Button iconLeft success block onPress={ () => this.props.navigation.navigate( 'WebViewTab' ) }
+                            style={ { width: '85%', alignSelf: 'center' } }>
+                            <Icon type='MaterialIcons' name='account-circle' />
                             <Text>My Account</Text>
                         </Button>
                         {/* /open Web View */ }
                         <Text>{ '\n' }</Text>
-                        <Button info block style={ { width: '85%', alignSelf: 'center', textAlign: 'center' } } onPress={ this.componentDidMount.bind( this ) }>
+                        <Button info block style={ { width: '85%', alignSelf: 'center', textAlign: 'center' } }
+                            onPress={ this.componentDidMount.bind( this ) }>
+                            <Icon type='MaterialIcons' name='account-balance-wallet' />
                             <Text style={ { fontSize: 20 } }>Rp { this.state.balance },00</Text>
                         </Button>
                         <Text>{ '\n' }</Text>
@@ -68,7 +71,7 @@ export default class HomeTab extends React.Component {
                             <Col>
                                 <Body>
                                     <Button iconLeft info>
-                                        <Icon type='MaterialCommunityIcons' name='finance' size={ 20 } />
+                                        <Icon type='MaterialCommunityIcons' name='finance' />
                                         <Text>Deposit</Text>
                                     </Button>
                                 </Body>
@@ -76,7 +79,7 @@ export default class HomeTab extends React.Component {
                             <Col>
                                 <Body>
                                     <Button iconLeft primary>
-                                        <Icon type='FontAwesome' name='gamepad' size={ 20 } />
+                                        <Icon type='FontAwesome' name='gamepad' />
                                         <Text>Game</Text>
                                     </Button>
                                 </Body>
@@ -95,8 +98,24 @@ export default class HomeTab extends React.Component {
                                             <Card>
                                                 <CardItem>
                                                     <Body>
-                                                        <Button transparent onPress={ () => this.props.navigation.navigate( 'pulse' ) }>
+                                                        <Button transparent onPress={ () => this.props.navigation.navigate( 'pulse' ) }
+                                                            style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } }
+                                                            disabled={ this.state.balance == 0 ? true : false }>
                                                             <Image source={ require( '../../assets/images/icon/pulsa.png' ) }
+                                                                style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } } />
+                                                        </Button>
+                                                    </Body>
+                                                </CardItem>
+                                            </Card>
+                                        </Col>
+                                        <Col>
+                                            <Card>
+                                                <CardItem>
+                                                    <Body>
+                                                        <Button transparent onPress={ () => this.props.navigation.navigate( 'PLN' ) }
+                                                            style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } }
+                                                            disabled={ this.state.balance == 0 ? true : false }>
+                                                            <Image source={ require( '../../assets/images/icon/pln.png' ) }
                                                                 style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } } />
                                                         </Button>
                                                     </Body>
@@ -123,21 +142,11 @@ export default class HomeTab extends React.Component {
                                                 </CardItem>
                                             </Card>
                                         </Col>
-                                        <Col>
-                                            <Card>
-                                                <CardItem>
-                                                    <Body>
-                                                        <Image source={ require( '../../assets/images/icon/pln.png' ) }
-                                                            style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } } />
-                                                    </Body>
-                                                </CardItem>
-                                            </Card>
-                                        </Col>
                                     </Row>
                                     {/* /Line 1 */ }
                                     {/* Line 2 */ }
                                     <Row>
-                                        <Col>
+                                        {/* <Col>
                                             <Card>
                                                 <CardItem>
                                                     <Body>
@@ -146,7 +155,7 @@ export default class HomeTab extends React.Component {
                                                     </Body>
                                                 </CardItem>
                                             </Card>
-                                        </Col>
+                                        </Col> */}
                                         <Col>
                                             <Card>
                                                 <CardItem>

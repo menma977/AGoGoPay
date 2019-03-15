@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, KeyboardAvoidingView, AsyncStorage, BackHandler } from 'react-native';
+import { View, KeyboardAvoidingView, AsyncStorage, BackHandler, Image } from 'react-native';
 import {
     Spinner,
     Body,
@@ -9,7 +9,6 @@ import {
     Button,
     Container,
     Content,
-    ListItem,
     Left,
     Radio,
     Right,
@@ -44,7 +43,7 @@ export default class PulseScreen extends React.Component {
             nominal: 5,
             type: 1,
             typeNumber: 5,
-            typeNumberName: 'Masukkan Nomer Ponsel',
+            typeNumberName: null,
             dataRequest: [],
         }
     }
@@ -95,26 +94,32 @@ export default class PulseScreen extends React.Component {
                 this.setState( { typeNumber: 6, typeNumberName: 'THREE' } );
                 this.setState( { isButton: false } );
             } else {
-                this.setState( { typeNumber: 7, typeNumberName: 'Type Nomer tidak terdekteksi' } );
+                this.setState( { typeNumber: 7, typeNumberName: null } );
                 this.setState( { isButton: true } );
             }
         } else {
-            this.setState( { typeNumber: 7, typeNumberName: 'Type Nomer tidak terdekteksi' } );
+            this.setState( { typeNumber: 7, typeNumberName: null } );
             this.setState( { isButton: true } );
         }
     }
 
     async sendDataRequest () {
         this.setState( { isLoading: true } );
-        if ( this.state.phone && this.state.nominal != null ) {
+        if ( this.state.phone >= 10 && this.state.nominal != null ) {
             let setType = this.state.type == 1 ? '' : 'DATA';
             let data = await PulseController.prototype.Request( this.state.username, this.state.code, this.state.phone.replace( '-', '' ).replace( '+62', '0' ), this.state.nominal, setType );
             if ( data.Status == 0 ) {
                 this.setState( { switchView: true, dataRequest: data } );
-            } else {
+            } else if ( data.Status == 1 ) {
                 Config.prototype.newAlert( 3, 'Transaksi dengan nominal no hp yang sama hanya bisa di lakukan 1x12jam. Gunakan nominal lain.', 10000, "top" );
                 this.setState( { switchView: false } );
+            } else {
+                AsyncStorage.clear();
+                Expo.Updates.reload();
+                this.props.navigation.navigate( 'Login' );
             }
+        } else if ( this.state.phone < 10 ) {
+            Config.prototype.newAlert( 2, 'Nomoar Telfon yang anda inputkan kurang dari 10 digit', 10000, "top" );
         } else {
             Config.prototype.newAlert( 3, 'Nomoar yang anda inputkan gagal di proses', 10000, "top" );
         }
@@ -140,13 +145,18 @@ export default class PulseScreen extends React.Component {
                 balance: setRemainingBalance,
                 nominal: 5,
                 phone: '',
-                typeNumberName: 'Type Nomer tidak terdekteksi',
+                typeNumberName: null,
             } );
             Config.prototype.newAlert( 1, data.Pesan, 10000, "top" );
             this.setState( { switchView: false } );
-        } else {
+            this.componentDidMount();
+        } else if ( data.Status == 1 ) {
             Config.prototype.newAlert( 2, data.Pesan, 10000, "top" );
             this.setState( { switchView: false } );
+        } else {
+            AsyncStorage.clear();
+            Expo.Updates.reload();
+            this.props.navigation.navigate( 'Login' );
         }
         this.setState( { isLoading: false } );
     }
@@ -296,6 +306,48 @@ export default class PulseScreen extends React.Component {
         }
     }
 
+    setImage () {
+        if ( this.state.typeNumberName ) {
+            let url = null;
+            if ( this.state.typeNumber == 1 ) {
+                url = require( '../assets/images/provider/TEKOMSEL.png' );
+            } else if ( this.state.typeNumber == 2 ) {
+                url = require( '../assets/images/provider/INDOSAT.png' );
+            } else if ( this.state.typeNumber == 3 ) {
+                url = require( '../assets/images/provider/XL.png' );
+            } else if ( this.state.typeNumber == 4 ) {
+                url = require( '../assets/images/provider/AXIS.png' );
+            } else if ( this.state.typeNumber == 5 ) {
+                url = require( '../assets/images/provider/SMART.png' );
+            } else {
+                url = require( '../assets/images/provider/THREE.png' );
+            }
+            return (
+                <Image source={ url }
+                    style={ { flex: 1, width: '100%', height: 55, resizeMode: 'contain', alignSelf: 'center' } } />
+            );
+        } else {
+            return (
+                <Text style={ { textAlign: 'center' } }>Masukkan Nomer Ponsel yang benar</Text>
+            );
+        }
+    }
+
+    setRupiah ( value ) {
+        let balance = String( value );
+        leftovers = balance.length % 3;
+        rupiah = balance.substr( 0, leftovers );
+        thousand = balance.substr( leftovers ).match( /\d{3}/g );
+        if ( thousand ) {
+            separator = leftovers
+                ? '.'
+                : '';
+            rupiah += separator + thousand.join( '.' );
+        }
+
+        return rupiah;
+    }
+
     render () {
         if ( this.state.isLoading ) {
             return (
@@ -314,11 +366,11 @@ export default class PulseScreen extends React.Component {
                             <Header style={ { backgroundColor: '#fbb5fd' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
-                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
+                                        <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>Pulsa</Title>
+                                    <Title><Icon active type='MaterialCommunityIcons' name='cellphone-basic' style={ { color: '#fff' } } /> Pulsa</Title>
                                 </Body>
                                 <Body style={ { alignItems: 'flex-end' } }></Body>
                             </Header>
@@ -328,27 +380,51 @@ export default class PulseScreen extends React.Component {
                                         <Text>Validasi Transaksi</Text>
                                     </CardItem>
                                     <CardItem>
-                                        <Text>No HP: { this.state.dataRequest.NoHP }</Text>
+                                        <Left>
+                                            <Icon active type='Feather' name='smartphone' size={ 25 } />
+                                            <Text>No HP</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>{ this.state.dataRequest.NoHP }</Text>
+                                        </Right>
                                     </CardItem>
                                     <CardItem>
-                                        <Text>Harga: { this.state.dataRequest.Harga }</Text>
+                                        <Left>
+                                            <Icon active type='FontAwesome' name='money' size={ 25 } />
+                                            <Text>Harga</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.Harga ) },00</Text>
+                                        </Right>
                                     </CardItem>
                                     <CardItem>
-                                        <Text>Saldo Awal: { this.state.dataRequest.SaldoAwal }</Text>
+                                        <Left>
+                                            <Icon active type='FontAwesome' name='balance-scale' size={ 25 } />
+                                            <Text>Saldo Awal</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.SaldoAwal ) },00</Text>
+                                        </Right>
                                     </CardItem>
                                     <CardItem>
-                                        <Text>Sisa Saldo: { this.state.dataRequest.SisaSaldo }</Text>
+                                        <Left>
+                                            <Icon active type='MaterialIcons' name='account-balance-wallet' size={ 25 } />
+                                            <Text>Sisa Saldo</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.SisaSaldo ) },00</Text>
+                                        </Right>
                                     </CardItem>
                                     <CardItem footer>
                                         <Left>
                                             <Button rounded block success style={ { alignSelf: 'center' } } onPress={ () => { this.setState( { switchView: false } ) } }>
-                                                <Icon type='Entypo' name='back' size={ 25 } color='#fff' />
+                                                <Icon active type='Entypo' name='back' size={ 25 } color='#fff' />
                                                 <Text>Kembali</Text>
                                             </Button>
                                         </Left>
                                         <Right>
                                             <Button rounded block success style={ { alignSelf: 'center' } } onPress={ this.buyData.bind( this ) }>
-                                                <Icon type='Entypo' name='shopping-cart' size={ 25 } color='#fff' />
+                                                <Icon active type='Entypo' name='shopping-cart' size={ 25 } color='#fff' />
                                                 <Text>Beli</Text>
                                             </Button>
                                         </Right>
@@ -368,17 +444,17 @@ export default class PulseScreen extends React.Component {
                             <Header style={ { backgroundColor: '#fbb5fd' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
-                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
+                                        <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>Pulsa</Title>
+                                    <Title><Icon active type='MaterialCommunityIcons' name='cellphone-basic' style={ { color: '#fff' } } /> Pulsa</Title>
                                 </Body>
                                 <Body style={ { alignItems: 'flex-end' } }></Body>
                             </Header>
                             <Content style={ { flex: 1 } }>
                                 <Text>{ '\n' }</Text>
-                                <Text style={ { textAlign: 'center' } }>{ this.state.typeNumberName }</Text>
+                                { this.setImage() }
                                 <Text>{ '\n' }</Text>
                                 <Card>
                                     <CardItem>
@@ -404,14 +480,18 @@ export default class PulseScreen extends React.Component {
                                 </Card>
                                 <Text>{ '\n' }</Text>
                                 <Form style={ [ Styles.alignItemCenter ] }>
-                                    <Text>{ '\n' }</Text>
-                                    <Item floatingLabel style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }>
+                                    <Item floatingLabel style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }
+                                        error={ this.state.phone.length >= 4 && this.state.phone.length < 10 ? true : false }
+                                        success={ this.state.phone.length >= 10 ? true : false }>
+                                        <Icon active type='FontAwesome' name='mobile-phone' />
                                         <Label>Nomer Ponsel</Label>
-                                        <Input keyboardType='numeric' value={ String( this.state.phone ) } onChangeText={ ( phone ) => this.seePhoneNumber( phone ) } />
+                                        <Input keyboardType='numeric' value={ String( this.state.phone ) }
+                                            onChangeText={ ( phone ) => this.seePhoneNumber( phone ) } />
                                     </Item>
                                     <Text>{ '\n' }</Text>
                                     <Text>{ '\n' }</Text>
                                     <Item style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }>
+                                        <Icon active type='MaterialCommunityIcons' name='package' />
                                         <Label>Paket</Label>
                                         { this.seeType() }
                                     </Item>

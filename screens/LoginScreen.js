@@ -207,9 +207,11 @@ export default class LoginScreen extends React.Component {
                                 } } />
                                 <Form style={ [ Styles.alignItemCenter, { top: 100, alignItems: 'center' } ] }>
                                     <Item rounded style={ { width: '80%', alignSelf: 'center', backgroundColor: '#fff' } }>
+                                        <Icon active type='EvilIcons' name='user' />
                                         <Input style={ { color: '#c658ca' } } placeholderTextColor='#c658ca' placeholder='Username' value={ this.state.username } onChangeText={ ( username ) => this.setState( { username } ) } />
                                     </Item>
                                     <Item rounded style={ { width: '80%', alignSelf: 'center', backgroundColor: '#fff', top: 30 } }>
+                                        <Icon active type='MaterialCommunityIcons' name='textbox-password' />
                                         <Input style={ { color: '#c658ca' } } placeholderTextColor='#c658ca' placeholder='Password' value={ this.state.password } onChangeText={ ( password ) => this.setState( { password } ) } secureTextEntry={ true } onSubmitEditing={ this.setSwitchValidate.bind( this ) } />
                                     </Item>
                                 </Form>

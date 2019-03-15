@@ -1,21 +1,30 @@
 import React from 'react';
-import { View, WebView, KeyboardAvoidingView } from 'react-native';
+import { View, WebView, KeyboardAvoidingView, BackHandler } from 'react-native';
 import {
     Spinner,
-    Body,
-    Title,
-    Header,
-    Icon,
-    Button
 } from 'native-base';
 import Styles from '../../constants/Styles';
 
 export default class WebViewTab extends React.Component {
     constructor ( props ) {
         super( props );
+        this.handleBackButtonClick = this.handleBackButtonClick.bind( this );
         this.state = {
             isLoading: true,
         }
+    }
+
+    componentWillMount () {
+        BackHandler.addEventListener( 'hardwareBackPress', this.handleBackButtonClick );
+    }
+
+    componentWillUnmount () {
+        BackHandler.removeEventListener( 'hardwareBackPress', this.handleBackButtonClick );
+    }
+
+    handleBackButtonClick () {
+        this.props.navigation.navigate( 'Home' )
+        return true;
     }
 
     async componentDidMount () {
@@ -33,26 +42,11 @@ export default class WebViewTab extends React.Component {
             );
         } else {
             return (
-                <View style={ [ Styles.container ] }>
-                    <Header style={ { backgroundColor: '#fbb5fd' } } >
-                        <Body style={ { alignItems: 'flex-start' } }>
-                            <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
-                                <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
-                            </Button>
-                        </Body>
-                        <Body style={ { alignItems: 'center' } }>
-                            <Title>WEB</Title>
-                        </Body>
-                        <Body style={ { alignItems: 'flex-end' } }></Body>
-                    </Header>
-                    {/* set keyboard avoid view */ }
-                    <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
-                        {/* load Web View */ }
-                        <WebView source={ { uri: 'https://www.agogopay.com/login' } } />
-                        {/* /load Web View */ }
-                    </KeyboardAvoidingView>
-                    {/* /set keyboard avoid view */ }
-                </View>
+                <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
+                    {/* load Web View */ }
+                    <WebView source={ { uri: 'https://max-in.io/login' } } />
+                    {/* /load Web View */ }
+                </KeyboardAvoidingView>
             );
         }
     }
