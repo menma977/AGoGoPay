@@ -291,7 +291,8 @@ export default class PLNScreen extends React.Component {
                                 <Text>{ '\n' }</Text>
                                 <Text>{ '\n' }</Text>
                                 <Text>{ '\n' }</Text>
-                                <Button rounded block success style={ { width: '90%', alignSelf: 'center' } } onPress={ this.sendDataRequest.bind( this ) }>
+                                <Button rounded block success style={ { width: '90%', alignSelf: 'center' } }
+                                    onPress={ this.sendDataRequest.bind( this ) } disabled={ this.state.phone < 10 && this.state.token < 11 }>
                                     <Icon type='Entypo' name='shopping-cart' size={ 25 } color='#fff' />
                                     <Text>Lajut Ke Pembelian</Text>
                                 </Button>

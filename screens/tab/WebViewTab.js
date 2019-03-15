@@ -44,7 +44,7 @@ export default class WebViewTab extends React.Component {
             return (
                 <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                     {/* load Web View */ }
-                    <WebView source={ { uri: 'https://max-in.io/login' } } />
+                    <WebView source={ { uri: 'https://www.agogopay.com/' } } />
                     {/* /load Web View */ }
                 </KeyboardAvoidingView>
             );

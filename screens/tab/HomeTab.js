@@ -22,6 +22,7 @@ export default class HomeTab extends React.Component {
         this.state = {
             isLoading: true,
             balance: 0,
+            username: '',
         }
     }
 
@@ -35,7 +36,7 @@ export default class HomeTab extends React.Component {
         } else {
             AsyncStorage.setItem( 'balance', '0' );
         }
-        this.setState( { balance: await AsyncStorage.getItem( 'balance' ) } );
+        this.setState( { balance: await AsyncStorage.getItem( 'balance' ), username: setUsername } );
         this.setState( { isLoading: false } );
     }
 
@@ -57,7 +58,7 @@ export default class HomeTab extends React.Component {
                         <Button iconLeft success block onPress={ () => this.props.navigation.navigate( 'WebViewTab' ) }
                             style={ { width: '85%', alignSelf: 'center' } }>
                             <Icon type='MaterialIcons' name='account-circle' />
-                            <Text>My Account</Text>
+                            <Text>{ this.state.username }</Text>
                         </Button>
                         {/* /open Web View */ }
                         <Text>{ '\n' }</Text>
