@@ -9,13 +9,9 @@ import {
     Button,
     Container,
     Content,
-    ListItem,
     Left,
-    Radio,
     Right,
     Text,
-    Row,
-    Col,
     Card,
     CardItem,
     Form,
@@ -26,10 +22,9 @@ import {
 } from 'native-base';
 import Styles from '../constants/Styles';
 import Config from '../components/model/Config';
-import PLNController from '../components/controller/PNLController';
-import ProductController from '../components/controller/ProductController';
+import PaymentController from '../components/controller/PaymentController';
 
-export default class PLNScreen extends React.Component {
+export default class PaymentScreen extends React.Component {
     constructor ( props ) {
         super( props );
         this.handleBackButtonClick = this.handleBackButtonClick.bind( this );
@@ -41,8 +36,8 @@ export default class PLNScreen extends React.Component {
             code: '',
             balance: 0,
             phone: '',
-            token: '',
-            nominal: 'PLN20',
+            nominal: 'ASCAR;1',
+            idClient: '',
             dataRequest: [],
             product: [],
         }
@@ -66,16 +61,125 @@ export default class PLNScreen extends React.Component {
             username: await AsyncStorage.getItem( 'username' ),
             code: await AsyncStorage.getItem( 'code' ),
             balance: await AsyncStorage.getItem( 'balance' ),
-            product: await ProductController.prototype.Request( await AsyncStorage.getItem( 'username' ), await AsyncStorage.getItem( 'code' ) ),
+            product: [
+                // Asuransi
+                { code: 'ASCAR;1', name: 'CAR' },
+                { code: 'ASPRU;2', name: 'PRUDENTIAL PREMI LANJUTAN' },
+                { code: 'ASBINT1;2', name: 'ASURANSI BINTANG PAKET' },
+                { code: 'ASBINT2;2', name: 'ASURANSI BINTANG PAKET 2' },
+                { code: 'ASJWS;2', name: 'ASURANSI JIWASRAYA -' },
+                { code: 'ASTOKIOS;2', name: 'TOKIO MARINE (SatuTagihan)' },
+                { code: 'ASTOKIO;2', name: 'TOKIO MARINE (SemuaTagihan)' },
+                // PDAM
+                { code: 'PAMAET;2', name: 'AETRA JAKARTA' },
+                { code: 'PAMPLJ;4', name: 'PALYJA JAKARTA' },
+                { code: 'PAMBNA;4', name: 'PDAM ACEH BESAR' },
+                { code: 'PAMBTM;4', name: 'PDAM BATAM' },
+                { code: 'PAMCMS;4', name: 'PDAM CIAMIS' },
+                { code: 'PAMCBN;4', name: 'PDAM CIREBON' },
+                { code: 'PAMGNK;4', name: 'PDAM GUNUNG KIDUL' },
+                { code: 'PAMJAP;4', name: 'PDAM JAYAPURA' },
+                { code: 'PAMKPRN;4', name: 'PDAM KAB. BALANGAN' },
+                { code: 'PAMKBDG;4', name: 'PDAM KAB. BANDUNG' },
+                { code: 'PAMKBKL;4', name: 'PDAM KAB. BANGKALAN' },
+                { code: 'PAMKPWT;4', name: 'PDAM KAB. BANYUMAS' },
+                { code: 'PAMKBTG;4', name: 'PDAM KAB. BATANG' },
+                { code: 'PAMBLA;4', name: 'PDAM KAB. BLORA' },
+                { code: 'PAMKBGR;4', name: 'PDAM KAB. BOGOR' },
+                { code: 'PAMKBGN;4', name: 'PDAM KAB. BOJONEGORO' },
+                { code: 'PAMKBDW;4', name: 'PDAM KAB. BONDOWOSO' },
+                { code: 'PAMKBYL;4', name: 'PDAM KAB. BOYOLALI' },
+                { code: 'PAMKBBS;4', name: 'PDAM KAB. BREBES' },
+                { code: 'PAMKSGR;4', name: 'PDAM KAB. BULELENG' },
+                { code: 'PAMKCLP;4', name: 'PDAM KAB. CILACAP' },
+                { code: 'PAMKPWD;4', name: 'PDAM KAB. GROBOGAN' },
+                { code: 'PAMKJMR;4', name: 'PDAM KAB. JEMBER' },
+                { code: 'PAMKJPA;4', name: 'PDAM KAB. JEPARA' },
+                { code: 'PAMKKRG;4', name: 'PDAM KAB. KARANGANYAR' },
+                { code: 'PAMKKBM;4', name: 'PDAM KAB. KEBUMEN' },
+                { code: 'PAMKKDL;4', name: 'PDAM KAB. KENDAL' },
+                { code: 'PAMKSRP;4', name: 'PDAM KAB. KLUNGKUNG' },
+                { code: 'PAMKSRY;4', name: 'PDAM KAB. KUBU RAYA' },
+                { code: 'PAMKKN;4', name: 'PDAM KAB. KUTAI KERTANEGARA' },
+                { code: 'PAMKPYA;4', name: 'PDAM KAB. LOMBOK TENGAH' },
+                { code: 'PAMMGG;4', name: 'PDAM KAB. MAGELANG' },
+                { code: 'PAMKMLG;4', name: 'PDAM KAB. MALANG' },
+                { code: 'PAMKMJK;4', name: 'PDAM KAB. MOJOKERTO' },
+                { code: 'PAMMBA;4', name: 'PDAM KAB. MUSI BANYUASIN' },
+                { code: 'PAMKPKL;4', name: 'PDAM KAB. PEKALONGAN' },
+                { code: 'PAMKPBL;4', name: 'PDAM KAB. PROBOLINGGO' },
+                { code: 'PAMKPBG;4', name: 'PDAM KAB. PURBALINGGA' },
+                { code: 'PAMKPWR;4', name: 'PDAM KAB. PURWOREJO' },
+                { code: 'PAMKRBG;4', name: 'PDAM KAB. REMBANG' },
+                { code: 'PAMKSPG;4', name: 'PDAM KAB. SAMPANG' },
+                { code: 'PAMKSMG;4', name: 'PDAM KAB. SEMARANG' },
+                { code: 'PAMKSDA;4', name: 'PDAM KAB. SIDOARJO' },
+                { code: 'PAMKSIT;4', name: 'PDAM KAB. SITUBONDO' },
+                { code: 'PAMKSMN;4', name: 'PDAM KAB. SLEMAN' },
+                { code: 'PAMKSKH;4', name: 'PDAM KAB. SUKOHARJO' },
+                { code: 'PAMKTNG;4', name: 'PDAM KAB. TANGERANG' },
+                { code: 'PAMKRTA;4', name: 'PDAM KAB. TAPIN' },
+                { code: 'PAMKTMG;4', name: 'PDAM KAB. TEMANGGUNG' },
+                { code: 'PAMKWNG;4', name: 'PDAM KAB. WONOGIRI' },
+                { code: 'PAMKWSB;4', name: 'PDAM KAB. WONOSOBO' },
+                { code: 'PAMBDL;4', name: 'PDAM KOTA BANDAR LAMPUNG' },
+                { code: 'PAMBDG;4', name: 'PDAM KOTA BANDUNG' },
+                { code: 'PAMBJB;4', name: 'PDAM KOTA BANJARBARU' },
+                { code: 'PAMDPR;4', name: 'PDAM KOTA DENPASAR' },
+                { code: 'PAMDPK;4', name: 'PDAM KOTA DEPOK' },
+                { code: 'PAMMAD;4', name: 'PDAM KOTA MADIUN' },
+                { code: 'PAMMLG;4', name: 'PDAM KOTA MALANG' },
+                { code: 'PAMMND;4', name: 'PDAM KOTA MANADO' },
+                { code: 'PAMMTR;4', name: 'PDAM KOTA MATARAM' },
+                { code: 'PAMMDN;4', name: 'PDAM KOTA MEDAN' },
+                { code: 'PAMPLG;4', name: 'PDAM KOTA PALEMBANG' },
+                { code: 'PAMPSR;4', name: 'PDAM KOTA PASURUAN' },
+                { code: 'PAMSLT;4', name: 'PDAM KOTA SALATIGA' },
+                { code: 'PAMSMG;4', name: 'PDAM KOTA SEMARANG' },
+                { code: 'PAMSBY;4', name: 'PDAM KOTA SURABAYA' },
+                { code: 'PAMSKT;4', name: 'PDAM KOTA SURAKARTA / KOTA SOLO' },
+                { code: 'PAMTGT;4', name: 'PDAM KOTA TANAH GROGOT' },
+                { code: 'PAMYYK;4', name: 'PDAM KOTA YOGYAKARTA' },
+                { code: 'PAMKTI;4', name: 'PDAM KUTAI' },
+                { code: 'PAMMGT;4', name: 'PDAM MAGETAN' },
+                { code: 'PAMMSI;4', name: 'PDAM MUSI' },
+                { code: 'PAMNGW;4', name: 'PDAM NGAWI' },
+                { code: 'PAMPLP;4', name: 'PDAM PALOPO' },
+                { code: 'PAMPTI;4', name: 'PDAM PATI' },
+                { code: 'PAMTTE;4', name: 'PDAM TERNATE' },
+                // HP Pascabayar
+                { code: 'HPTSEL;2', name: 'TELKOMSEL HALO' },
+                { code: 'HPXL;2', name: 'XL (XPLOR)' },
+                { code: 'HPMTRIX;2', name: 'INDOSAT (MATRIX)' },
+                { code: 'HPTHREE;2', name: 'THREE (POSTPAID)' },
+                { code: 'HPSMART;2', name: 'SMARTFREN (POSTPAID)' },
+                { code: 'HPESIA;2', name: 'ESIA (POSTPAID)' },
+                { code: 'HPFREN;2', name: 'FREN, MOBI (POSTPAID)' },
+                // Liseng
+                { code: 'LSADIRAL;1', name: 'ADIRA ELEKTRONIK' },
+                { code: 'LSADIRA;1', name: 'ADIRA MOTOR' },
+                { code: 'LSBIMA;1', name: 'Bima Finance' },
+                { code: 'LSBAF;1', name: 'Bussan Auto Finance (BAF)' },
+                { code: 'LSCLMB;1', name: 'COLUMBIA' },
+                { code: 'LSFIF;1', name: 'FIF' },
+                { code: 'LSMAF;1', name: 'MEGA AUTO FINANCE' },
+                { code: 'LSMEGA;1', name: 'MEGA CENTRAL FINANCE' },
+                { code: 'LSMPM;1', name: 'MPM Finance' },
+                { code: 'LSOTO;1', name: 'Oto Finance' },
+                { code: 'LSRADA;1', name: 'Radana Finance' },
+                { code: 'LSWKF;1', name: 'WOKA FINANCE' },
+                { code: 'LSWOM;1', name: 'WOM FINANCE' },
+            ],
         } );
         this.setState( { isLoading: false } );
     }
 
     async sendDataRequest () {
         this.setState( { isLoading: true } );
-        if ( this.state.phone.length >= 10 && this.state.token.length >= 11 && this.state.nominal != null ) {
+        if ( this.state.phone.length >= 10 && this.state.idClient.length >= 8 && this.state.nominal != null ) {
             let setType = this.state.nominal;
-            let data = await PLNController.prototype.Request( this.state.username, this.state.code, this.state.phone.replace( /-/g, '' ).replace( '+62', '0' ).replace( ' ', '' ), this.state.token, setType );
+            let setIdClient = this.state.idClient;
+            let data = await PaymentController.prototype.Request( this.state.username, this.state.code, this.state.phone.replace( /-/g, '' ).replace( '+62', '0' ).replace( ' ', '' ), setIdClient, this.state.balance, setType );
             if ( data.Status == 0 ) {
                 this.setState( { switchView: true, dataRequest: data } );
             } else if ( data.Status == 1 ) {
@@ -88,7 +192,7 @@ export default class PLNScreen extends React.Component {
             }
         } else if ( this.state.phone.length < 10 ) {
             Config.prototype.newAlert( 2, 'Nomor ponsel yang anda masukkan kurang dari 10 digit', 10000, "top" );
-        } else if ( this.state.token.length < 11 ) {
+        } else if ( this.state.idClient.length < 8 ) {
             Config.prototype.newAlert( 2, 'Nomor meter yang anda masukkan kurang dari 11 digit', 10000, "top" );
         } else {
             Config.prototype.newAlert( 3, 'Transaksi gagal diproses', 10000, "top" );
@@ -99,15 +203,19 @@ export default class PLNScreen extends React.Component {
     async buyData () {
         this.setState( { isLoading: true } );
         let dataRequest = this.state.dataRequest;
-        let setUsername = dataRequest.Username;
-        let setCode = dataRequest.IdLogin;
+        let setUsername = this.state.username;
+        let setCode = this.state.code;
+        let setType = dataRequest.Type;
+        let setClientID = dataRequest.IdPel;
+        let setClientName = dataRequest.NamaPelanggan;
+        let setPrice = dataRequest.JmlTagih;
+        let setAdmin = dataRequest.AdminBank;
+        let setTotalPrice = dataRequest.TotalTagihan;
         let setPhoneNumber = dataRequest.NoHP;
-        let setPayCode = dataRequest.Kode;
-        let setToken = dataRequest.IdPel;
-        let setFirstBalance = dataRequest.SaldoAwal;
-        let setPrice = dataRequest.Harga;
         let setRemainingBalance = dataRequest.SisaSaldo;
-        let data = await PLNController.prototype.Pay( setUsername, setCode, setPhoneNumber, setPayCode, setToken, setFirstBalance, setPrice, setRemainingBalance );
+        let setRef = dataRequest.Ref;
+        let setPeriodic = dataRequest.PeriodeTagihan;
+        let data = PaymentController.prototype.Pay( setUsername, setCode, setType, setClientID, setClientName, setPrice, setAdmin, setTotalPrice, setPhoneNumber, setRemainingBalance, setRef, setPeriodic )
         if ( data.Status == 0 ) {
             AsyncStorage.setItem( 'balance', setRemainingBalance );
             this.setState( {
@@ -166,9 +274,8 @@ export default class PLNScreen extends React.Component {
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>PLN</Title>
+                                    <Title>Payment</Title>
                                 </Body>
-
                             </Header>
                             <Content style={ { flex: 1 } }>
                                 <Card>
@@ -186,11 +293,38 @@ export default class PLNScreen extends React.Component {
                                     </CardItem>
                                     <CardItem>
                                         <Left>
-                                            <Icon active type='MaterialCommunityIcons' name='package' />
-                                            <Text>Nomor Meter</Text>
+                                            <Icon active type='AntDesign' name='idcard' />
+                                            <Text>ID Pelanggan</Text>
                                         </Left>
                                         <Right>
                                             <Text>{ this.state.dataRequest.IdPel }</Text>
+                                        </Right>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Left>
+                                            <Icon active type='FontAwesome' name='user-o' />
+                                            <Text>Nama Pelanggan</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>{ this.state.dataRequest.NamaPelanggan }</Text>
+                                        </Right>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Left>
+                                            <Icon active type='MaterialCommunityIcons' name='package' />
+                                            <Text>Jenis Pemeblian</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>{ this.state.dataRequest.Type }</Text>
+                                        </Right>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Left>
+                                            <Icon active type='FontAwesome' name='money' />
+                                            <Text>Biyaya Admin</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.AdminBank ) },00</Text>
                                         </Right>
                                     </CardItem>
                                     <CardItem>
@@ -199,7 +333,7 @@ export default class PLNScreen extends React.Component {
                                             <Text>Harga</Text>
                                         </Left>
                                         <Right>
-                                            <Text>Rp { this.setRupiah( this.state.dataRequest.Harga ) },00</Text>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.JmlTagih ) },00</Text>
                                         </Right>
                                     </CardItem>
                                     <CardItem>
@@ -208,7 +342,16 @@ export default class PLNScreen extends React.Component {
                                             <Text>Saldo Awal</Text>
                                         </Left>
                                         <Right>
-                                            <Text>Rp { this.setRupiah( this.state.dataRequest.SaldoAwal ) },00</Text>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.SaldoMember ) },00</Text>
+                                        </Right>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Left>
+                                            <Icon active type='FontAwesome' name='balance-scale' />
+                                            <Text>Total Tagihan</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.TotalTagihan ) },00</Text>
                                         </Right>
                                     </CardItem>
                                     <CardItem>
@@ -242,12 +385,6 @@ export default class PLNScreen extends React.Component {
                     </KeyboardAvoidingView>
                 );
             } else {
-                let data = [];
-                this.state.product[ 'PLN' ].map( function ( item, key ) {
-                    if ( item[ 'type' ] == 'TOKEN' ) {
-                        data.push( { code: item[ 'code' ], name: 'Rp ' + item[ 'code' ].replace( 'PLN', '' ) + '.000' } );
-                    }
-                } );
                 return (
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
@@ -259,9 +396,8 @@ export default class PLNScreen extends React.Component {
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>PLN</Title>
+                                    <Title>Payment</Title>
                                 </Body>
-
                             </Header>
                             <Content style={ { flex: 1 } }>
                                 <Form style={ [ Styles.alignItemCenter ] }>
@@ -274,19 +410,19 @@ export default class PLNScreen extends React.Component {
                                     </Item>
                                     <Text>{ '\n' }</Text>
                                     <Item floatingLabel style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }
-                                        error={ this.state.token.length >= 1 && this.state.token.length < 11 ? true : false }
-                                        success={ this.state.token.length >= 11 ? true : false }>
-                                        <Icon active type='MaterialCommunityIcons' name='scale-bathroom' />
-                                        <Label>Nomor Meter</Label>
-                                        <Input keyboardType='numeric' value={ String( this.state.token ) } onChangeText={ ( token ) => this.setState( { token } ) } />
+                                        error={ this.state.idClient.length >= 1 && this.state.idClient.length < 8 ? true : false }
+                                        success={ this.state.idClient.length >= 8 ? true : false }>
+                                        <Icon active type='FontAwesome' name='user-o' />
+                                        <Label>ID Pelanggan</Label>
+                                        <Input keyboardType='numeric' value={ String( this.state.idClient ) } onChangeText={ ( idClient ) => this.setState( { idClient } ) } />
                                     </Item>
                                     <Text>{ '\n' }</Text>
                                     <Text>{ '\n' }</Text>
                                     <Item style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }>
                                         <Icon active type='MaterialCommunityIcons' name='package' />
-                                        <Label>Token</Label>
+                                        <Label>Produk</Label>
                                         <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                                            { data.map( function ( item, key ) {
+                                            { this.state.product.map( function ( item, key ) {
                                                 return (
                                                     <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
                                                 );
@@ -299,7 +435,7 @@ export default class PLNScreen extends React.Component {
                                 <Text>{ '\n' }</Text>
                                 <Text>{ '\n' }</Text>
                                 <Button rounded block success style={ { width: '90%', alignSelf: 'center' } }
-                                    onPress={ this.sendDataRequest.bind( this ) } disabled={ this.state.phone < 10 && this.state.token < 11 }>
+                                    onPress={ this.sendDataRequest.bind( this ) } disabled={ this.state.phone < 10 && this.state.idClient < 11 }>
                                     <Icon type='Entypo' name='shopping-cart' size={ 25 } color='#fff' />
                                     <Text>Lajut Ke Pembelian</Text>
                                 </Button>

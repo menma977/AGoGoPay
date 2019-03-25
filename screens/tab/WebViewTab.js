@@ -28,13 +28,15 @@ export default class WebViewTab extends React.Component {
     }
 
     async componentDidMount () {
-        this.setState( { isLoading: false } );
+        setTimeout( () => {
+            this.setState( { isLoading: false } );
+        }, 1000 );
     }
 
     render () {
         if ( this.state.isLoading ) {
             return (
-                <View style={ [ Styles.container, { backgroundColor: '#fbb5fd' } ] }>
+                <View style={ [ Styles.container, { backgroundColor: '#f27e95' } ] }>
                     <View style={ [ Styles.container, Styles.justifyContentCenter ] }>
                         <Spinner color='#fff' />
                     </View>

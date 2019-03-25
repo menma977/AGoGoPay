@@ -9,13 +9,9 @@ import {
     Button,
     Container,
     Content,
-    ListItem,
     Left,
-    Radio,
     Right,
     Text,
-    Row,
-    Col,
     Card,
     CardItem,
     Form,
@@ -26,10 +22,9 @@ import {
 } from 'native-base';
 import Styles from '../constants/Styles';
 import Config from '../components/model/Config';
-import PLNController from '../components/controller/PNLController';
-import ProductController from '../components/controller/ProductController';
+import PaymentController from '../components/controller/PaymentController';
 
-export default class PLNScreen extends React.Component {
+export default class PLNPascaScreen extends React.Component {
     constructor ( props ) {
         super( props );
         this.handleBackButtonClick = this.handleBackButtonClick.bind( this );
@@ -41,8 +36,8 @@ export default class PLNScreen extends React.Component {
             code: '',
             balance: 0,
             phone: '',
-            token: '',
-            nominal: 'PLN20',
+            nominal: 'PLNPAC;2',
+            idClient: '',
             dataRequest: [],
             product: [],
         }
@@ -66,16 +61,20 @@ export default class PLNScreen extends React.Component {
             username: await AsyncStorage.getItem( 'username' ),
             code: await AsyncStorage.getItem( 'code' ),
             balance: await AsyncStorage.getItem( 'balance' ),
-            product: await ProductController.prototype.Request( await AsyncStorage.getItem( 'username' ), await AsyncStorage.getItem( 'code' ) ),
+            product: [
+                { name: 'PLN Pasca Bayar', code: 'PLNPAC;2' },
+                { name: 'PLN Non Taglist', code: 'PLNNON;2' },
+            ],
         } );
         this.setState( { isLoading: false } );
     }
 
     async sendDataRequest () {
         this.setState( { isLoading: true } );
-        if ( this.state.phone.length >= 10 && this.state.token.length >= 11 && this.state.nominal != null ) {
+        if ( this.state.phone.length >= 10 && this.state.idClient.length >= 8 && this.state.nominal != null ) {
             let setType = this.state.nominal;
-            let data = await PLNController.prototype.Request( this.state.username, this.state.code, this.state.phone.replace( /-/g, '' ).replace( '+62', '0' ).replace( ' ', '' ), this.state.token, setType );
+            let setIdClient = this.state.idClient;
+            let data = await PaymentController.prototype.Request( this.state.username, this.state.code, this.state.phone.replace( /-/g, '' ).replace( '+62', '0' ).replace( ' ', '' ), setIdClient, this.state.balance, setType );
             if ( data.Status == 0 ) {
                 this.setState( { switchView: true, dataRequest: data } );
             } else if ( data.Status == 1 ) {
@@ -88,7 +87,7 @@ export default class PLNScreen extends React.Component {
             }
         } else if ( this.state.phone.length < 10 ) {
             Config.prototype.newAlert( 2, 'Nomor ponsel yang anda masukkan kurang dari 10 digit', 10000, "top" );
-        } else if ( this.state.token.length < 11 ) {
+        } else if ( this.state.idClient.length < 8 ) {
             Config.prototype.newAlert( 2, 'Nomor meter yang anda masukkan kurang dari 11 digit', 10000, "top" );
         } else {
             Config.prototype.newAlert( 3, 'Transaksi gagal diproses', 10000, "top" );
@@ -99,15 +98,19 @@ export default class PLNScreen extends React.Component {
     async buyData () {
         this.setState( { isLoading: true } );
         let dataRequest = this.state.dataRequest;
-        let setUsername = dataRequest.Username;
-        let setCode = dataRequest.IdLogin;
+        let setUsername = this.state.username;
+        let setCode = this.state.code;
+        let setType = dataRequest.Type;
+        let setClientID = dataRequest.IdPel;
+        let setClientName = dataRequest.NamaPelanggan;
+        let setPrice = dataRequest.JmlTagih;
+        let setAdmin = dataRequest.AdminBank;
+        let setTotalPrice = dataRequest.TotalTagihan;
         let setPhoneNumber = dataRequest.NoHP;
-        let setPayCode = dataRequest.Kode;
-        let setToken = dataRequest.IdPel;
-        let setFirstBalance = dataRequest.SaldoAwal;
-        let setPrice = dataRequest.Harga;
         let setRemainingBalance = dataRequest.SisaSaldo;
-        let data = await PLNController.prototype.Pay( setUsername, setCode, setPhoneNumber, setPayCode, setToken, setFirstBalance, setPrice, setRemainingBalance );
+        let setRef = dataRequest.Ref;
+        let setPeriodic = dataRequest.PeriodeTagihan;
+        let data = PaymentController.prototype.Pay( setUsername, setCode, setType, setClientID, setClientName, setPrice, setAdmin, setTotalPrice, setPhoneNumber, setRemainingBalance, setRef, setPeriodic )
         if ( data.Status == 0 ) {
             AsyncStorage.setItem( 'balance', setRemainingBalance );
             this.setState( {
@@ -166,9 +169,8 @@ export default class PLNScreen extends React.Component {
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>PLN</Title>
+                                    <Title>PASCABAYAR</Title>
                                 </Body>
-
                             </Header>
                             <Content style={ { flex: 1 } }>
                                 <Card>
@@ -186,11 +188,38 @@ export default class PLNScreen extends React.Component {
                                     </CardItem>
                                     <CardItem>
                                         <Left>
-                                            <Icon active type='MaterialCommunityIcons' name='package' />
-                                            <Text>Nomor Meter</Text>
+                                            <Icon active type='AntDesign' name='idcard' />
+                                            <Text>ID Pelanggan</Text>
                                         </Left>
                                         <Right>
                                             <Text>{ this.state.dataRequest.IdPel }</Text>
+                                        </Right>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Left>
+                                            <Icon active type='FontAwesome' name='user-o' />
+                                            <Text>Nama Pelanggan</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>{ this.state.dataRequest.NamaPelanggan }</Text>
+                                        </Right>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Left>
+                                            <Icon active type='MaterialCommunityIcons' name='package' />
+                                            <Text>Jenis Pemeblian</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>{ this.state.dataRequest.Type }</Text>
+                                        </Right>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Left>
+                                            <Icon active type='FontAwesome' name='money' />
+                                            <Text>Biyaya Admin</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.AdminBank ) },00</Text>
                                         </Right>
                                     </CardItem>
                                     <CardItem>
@@ -199,7 +228,7 @@ export default class PLNScreen extends React.Component {
                                             <Text>Harga</Text>
                                         </Left>
                                         <Right>
-                                            <Text>Rp { this.setRupiah( this.state.dataRequest.Harga ) },00</Text>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.JmlTagih ) },00</Text>
                                         </Right>
                                     </CardItem>
                                     <CardItem>
@@ -208,7 +237,16 @@ export default class PLNScreen extends React.Component {
                                             <Text>Saldo Awal</Text>
                                         </Left>
                                         <Right>
-                                            <Text>Rp { this.setRupiah( this.state.dataRequest.SaldoAwal ) },00</Text>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.SaldoMember ) },00</Text>
+                                        </Right>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Left>
+                                            <Icon active type='FontAwesome' name='balance-scale' />
+                                            <Text>Total Tagihan</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>Rp { this.setRupiah( this.state.dataRequest.TotalTagihan ) },00</Text>
                                         </Right>
                                     </CardItem>
                                     <CardItem>
@@ -242,12 +280,6 @@ export default class PLNScreen extends React.Component {
                     </KeyboardAvoidingView>
                 );
             } else {
-                let data = [];
-                this.state.product[ 'PLN' ].map( function ( item, key ) {
-                    if ( item[ 'type' ] == 'TOKEN' ) {
-                        data.push( { code: item[ 'code' ], name: 'Rp ' + item[ 'code' ].replace( 'PLN', '' ) + '.000' } );
-                    }
-                } );
                 return (
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
@@ -259,9 +291,8 @@ export default class PLNScreen extends React.Component {
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>PLN</Title>
+                                    <Title>PASCABAYAR</Title>
                                 </Body>
-
                             </Header>
                             <Content style={ { flex: 1 } }>
                                 <Form style={ [ Styles.alignItemCenter ] }>
@@ -274,19 +305,19 @@ export default class PLNScreen extends React.Component {
                                     </Item>
                                     <Text>{ '\n' }</Text>
                                     <Item floatingLabel style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }
-                                        error={ this.state.token.length >= 1 && this.state.token.length < 11 ? true : false }
-                                        success={ this.state.token.length >= 11 ? true : false }>
-                                        <Icon active type='MaterialCommunityIcons' name='scale-bathroom' />
-                                        <Label>Nomor Meter</Label>
-                                        <Input keyboardType='numeric' value={ String( this.state.token ) } onChangeText={ ( token ) => this.setState( { token } ) } />
+                                        error={ this.state.idClient.length >= 1 && this.state.idClient.length < 8 ? true : false }
+                                        success={ this.state.idClient.length >= 8 ? true : false }>
+                                        <Icon active type='FontAwesome' name='user-o' />
+                                        <Label>ID Pelanggan</Label>
+                                        <Input keyboardType='numeric' value={ String( this.state.idClient ) } onChangeText={ ( idClient ) => this.setState( { idClient } ) } />
                                     </Item>
                                     <Text>{ '\n' }</Text>
                                     <Text>{ '\n' }</Text>
                                     <Item style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }>
                                         <Icon active type='MaterialCommunityIcons' name='package' />
-                                        <Label>Token</Label>
+                                        <Label>Produk</Label>
                                         <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                                            { data.map( function ( item, key ) {
+                                            { this.state.product.map( function ( item, key ) {
                                                 return (
                                                     <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
                                                 );
@@ -299,7 +330,7 @@ export default class PLNScreen extends React.Component {
                                 <Text>{ '\n' }</Text>
                                 <Text>{ '\n' }</Text>
                                 <Button rounded block success style={ { width: '90%', alignSelf: 'center' } }
-                                    onPress={ this.sendDataRequest.bind( this ) } disabled={ this.state.phone < 10 && this.state.token < 11 }>
+                                    onPress={ this.sendDataRequest.bind( this ) } disabled={ this.state.phone < 10 && this.state.idClient < 11 }>
                                     <Icon type='Entypo' name='shopping-cart' size={ 25 } color='#fff' />
                                     <Text>Lajut Ke Pembelian</Text>
                                 </Button>

@@ -24,9 +24,10 @@ import {
     Picker
 } from 'native-base';
 import Styles from '../constants/Styles';
-import PhoneCodeController from '../components/controller/PhoneCodeControler';
 import Config from '../components/model/Config';
 import PulseController from '../components/controller/PulseController';
+import HLRController from '../components/controller/HLRController';
+import ProductController from '../components/controller/ProductController';
 
 export default class PulseScreen extends React.Component {
     constructor ( props ) {
@@ -42,9 +43,11 @@ export default class PulseScreen extends React.Component {
             phone: '',
             nominal: 5,
             type: 1,
-            typeNumber: 5,
+            typeNumber: 7,
             typeNumberName: null,
             dataRequest: [],
+            HLR: [],
+            product: []
         }
     }
 
@@ -66,6 +69,8 @@ export default class PulseScreen extends React.Component {
             username: await AsyncStorage.getItem( 'username' ),
             code: await AsyncStorage.getItem( 'code' ),
             balance: await AsyncStorage.getItem( 'balance' ),
+            HLR: await HLRController.prototype.Request( await AsyncStorage.getItem( 'username' ), await AsyncStorage.getItem( 'code' ) ),
+            product: await ProductController.prototype.Request( await AsyncStorage.getItem( 'username' ), await AsyncStorage.getItem( 'code' ) ),
         } );
         this.setState( { isLoading: false } );
     }
@@ -73,24 +78,26 @@ export default class PulseScreen extends React.Component {
 
     seePhoneNumber ( phone ) {
         this.setState( { phone } );
-        if ( phone ) {
-            let phoneNumber = phone.substring( 0, 4 );
-            if ( PhoneCodeController.prototype.Telkomsel( phoneNumber ) ) {
-                this.setState( { typeNumber: 1, typeNumberName: 'TEKOMSEL' } );
+        let found = this.state.HLR.find( function ( element ) {
+            return element.Hlr == phone.replace( /-/g, '' ).replace( '+62', '0' ).replace( ' ', '' ).substring( 0, 4 );
+        } );
+        if ( found ) {
+            if ( found.Operator == 'TELKOMSEL' ) {
+                this.setState( { typeNumber: 1, typeNumberName: 'TELKOMSEL' } );
                 this.setState( { isButton: false } );
-            } else if ( PhoneCodeController.prototype.Indosat( phoneNumber ) ) {
+            } else if ( found.Operator == 'INDOSAT' ) {
                 this.setState( { typeNumber: 2, typeNumberName: 'INDOSAT' } );
                 this.setState( { isButton: false } );
-            } else if ( PhoneCodeController.prototype.XL( phoneNumber ) ) {
+            } else if ( found.Operator == 'XL' ) {
                 this.setState( { typeNumber: 3, typeNumberName: 'XL' } );
                 this.setState( { isButton: false } );
-            } else if ( PhoneCodeController.prototype.Axis( phoneNumber ) ) {
+            } else if ( found.Operator == 'AXIS' ) {
                 this.setState( { typeNumber: 4, typeNumberName: 'AXIS' } );
                 this.setState( { isButton: false } );
-            } else if ( PhoneCodeController.prototype.Smart( phoneNumber ) ) {
+            } else if ( found.Operator == 'SMART' ) {
                 this.setState( { typeNumber: 5, typeNumberName: 'SMART' } );
                 this.setState( { isButton: false } );
-            } else if ( PhoneCodeController.prototype.Three( phoneNumber ) ) {
+            } else if ( found.Operator == 'THREE' ) {
                 this.setState( { typeNumber: 6, typeNumberName: 'THREE' } );
                 this.setState( { isButton: false } );
             } else {
@@ -105,9 +112,9 @@ export default class PulseScreen extends React.Component {
 
     async sendDataRequest () {
         this.setState( { isLoading: true } );
-        if ( this.state.phone >= 10 && this.state.nominal != null ) {
+        if ( this.state.phone.length >= 10 && this.state.nominal != null ) {
             let setType = this.state.type == 1 ? '' : 'DATA';
-            let data = await PulseController.prototype.Request( this.state.username, this.state.code, this.state.phone.replace( '-', '' ).replace( '+62', '0' ), this.state.nominal, setType );
+            let data = await PulseController.prototype.Request( this.state.username, this.state.code, this.state.phone.replace( /-/g, '' ).replace( '+62', '0' ).replace( ' ', '' ), this.state.nominal, setType );
             if ( data.Status == 0 ) {
                 this.setState( { switchView: true, dataRequest: data } );
             } else if ( data.Status == 1 ) {
@@ -118,10 +125,10 @@ export default class PulseScreen extends React.Component {
                 Expo.Updates.reload();
                 this.props.navigation.navigate( 'Login' );
             }
-        } else if ( this.state.phone < 10 ) {
+        } else if ( this.state.phone.length < 10 ) {
             Config.prototype.newAlert( 2, 'Nomoar Telfon yang anda inputkan kurang dari 10 digit', 10000, "top" );
         } else {
-            Config.prototype.newAlert( 3, 'Nomoar yang anda inputkan gagal di proses', 10000, "top" );
+            Config.prototype.newAlert( 3, 'Provider tidak di temukan', 10000, "top" );
         }
         this.setState( { isLoading: false } );
     }
@@ -170,137 +177,205 @@ export default class PulseScreen extends React.Component {
     }
 
     setNominal () {
+        let data = [];
         if ( this.state.typeNumber == 1 ) {
+            this.state.product[ 'TELKOMSEL' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'REGULER' ) {
+                    data.push( { code: item[ 'code' ].replace( 'TELKOMSEL', '' ), name: 'Rp ' + item[ 'code' ].replace( 'TELKOMSEL', '' ) + '.000' } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Rp 5.000" value="5" />
-                    <Picker.Item label="Rp 10.000" value="10" />
-                    <Picker.Item label="Rp 20.000" value="20" />
-                    <Picker.Item label="Rp 25.000" value="25" />
-                    <Picker.Item label="Rp 50.000" value="50" />
-                    <Picker.Item label="Rp 100.000" value="100" />
-                    <Picker.Item label="Rp 200.000" value="200" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 2 ) {
+            this.state.product[ 'INDOSAT' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'REGULER' ) {
+                    data.push( { code: item[ 'code' ].replace( 'INDOSAT', '' ), name: 'Rp ' + item[ 'code' ].replace( 'INDOSAT', '' ) + '.000' } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Rp 5.000" value="5" />
-                    <Picker.Item label="Rp 10.000" value="10" />
-                    <Picker.Item label="Rp 20.000" value="20" />
-                    <Picker.Item label="Rp 25.000" value="25" />
-                    <Picker.Item label="Rp 30.000" value="30" />
-                    <Picker.Item label="Rp 50.000" value="50" />
-                    <Picker.Item label="Rp 100.000" value="100" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 3 ) {
+            this.state.product[ 'XL' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'REGULER' ) {
+                    data.push( { code: item[ 'code' ].replace( 'XL', '' ), name: 'Rp ' + item[ 'code' ].replace( 'XL', '' ) + '.000' } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Rp 5.000" value="5" />
-                    <Picker.Item label="Rp 10.000" value="10" />
-                    <Picker.Item label="Rp 25.000" value="25" />
-                    <Picker.Item label="Rp 50.000" value="50" />
-                    <Picker.Item label="Rp 100.000" value="100" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 4 ) {
+            this.state.product[ 'AXIS' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'REGULER' ) {
+                    data.push( { code: item[ 'code' ].replace( 'AXIS', '' ), name: 'Rp ' + item[ 'code' ].replace( 'AXIS', '' ) + '.000' } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Rp 5.000" value="5" />
-                    <Picker.Item label="Rp 10.000" value="10" />
-                    <Picker.Item label="Rp 25.000" value="25" />
-                    <Picker.Item label="Rp 50.000" value="50" />
-                    <Picker.Item label="Rp 100.000" value="100" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 5 ) {
+            this.state.product[ 'SMART' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'REGULER' ) {
+                    data.push( { code: item[ 'code' ].replace( 'SMART', '' ), name: 'Rp ' + item[ 'code' ].replace( 'SMART', '' ) + '.000' } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Rp 5.000" value="5" />
-                    <Picker.Item label="Rp 10.000" value="10" />
-                    <Picker.Item label="Rp 20.000" value="20" />
-                    <Picker.Item label="Rp 50.000" value="50" />
-                    <Picker.Item label="Rp 100.000" value="100" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 6 ) {
+            this.state.product[ 'THREE' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'REGULER' ) {
+                    data.push( { code: item[ 'code' ].replace( 'THREE', '' ), name: 'Rp ' + item[ 'code' ].replace( 'THREE', '' ) + '.000' } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Rp 1.000" value="1" />
-                    <Picker.Item label="Rp 5.000" value="5" />
-                    <Picker.Item label="Rp 10.000" value="10" />
-                    <Picker.Item label="Rp 20.000" value="20" />
-                    <Picker.Item label="Rp 30.000" value="30" />
-                    <Picker.Item label="Rp 50.000" value="50" />
-                    <Picker.Item label="Rp 100.000" value="100" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else {
+            data = [];
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Type Nomer tidak terdekteksi" value={ null } />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    <Picker.Item label="Provider tidak di temukan" value={ null } />
                 </Picker>
             );
         }
     }
 
     setData () {
+        let data = [];
         if ( this.state.typeNumber == 1 ) {
+            this.state.product[ 'TELKOMSEL' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'DATA' ) {
+                    data.push( { code: item[ 'code' ].replace( 'TELKOMSELDATA', '' ), name: item[ 'name' ] } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="TELKOMSEL 1200MB 30HR" value="50" />
-                    <Picker.Item label="TELKOMSEL 3500MB 30HR" value="100" />
-                    <Picker.Item label="TELKOMSEL 35MB 7 HR" value="5" />
-                    <Picker.Item label="TELKOMSEL 420MB 7HR" value="20" />
-                    <Picker.Item label="TELKOMSEL 550MB 30HR" value="25" />
-                    <Picker.Item label="TELKOMSEL 90MB 7HR" value="10" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 2 ) {
+            this.state.product[ 'INDOSAT' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'DATA' ) {
+                    data.push( { code: item[ 'code' ].replace( 'INDOSATDATA', '' ), name: item[ 'name' ] } );
+                }
+            } );
+            console.log( data );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="ISAT 1GB 24JAM 30HR" value="10" />
-                    <Picker.Item label="ISAT 2GB 24JAM 30HR" value="20" />
-                    <Picker.Item label="ISAT 3GB 30HR" value="30" />
-                    <Picker.Item label="ISAT 7GB 30HR" value="70" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 3 ) {
+            this.state.product[ 'XL' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'DATA' ) {
+                    data.push( { code: item[ 'code' ], name: item[ 'name' ] } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Xl Data 1.5 GB 60 Hr" value="50" />
-                    <Picker.Item label="Xl Data 3 GB 60 Hr" value="60" />
-                    <Picker.Item label="Xl Data 50 MB 7 Hr" value="5" />
-                    <Picker.Item label="Xl Data 800 Mb 30 Hr" value="30" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 4 ) {
+            this.state.product[ 'AXIS' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'DATA' ) {
+                    data.push( { code: item[ 'code' ], name: item[ 'name' ] } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="AXIS 1GB" value="1" />
-                    <Picker.Item label="AXIS 2GB" value="2" />
-                    <Picker.Item label="AXIS 3GB" value="3" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 5 ) {
+            this.state.product[ 'SMART' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'DATA' ) {
+                    data.push( { code: item[ 'code' ], name: item[ 'name' ] } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Tidak memiliki paket" value={ null } />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else if ( this.state.typeNumber == 6 ) {
+            this.state.product[ 'THREE' ].map( function ( item, key ) {
+                if ( item[ 'type' ] == 'DATA' ) {
+                    data.push( { code: item[ 'code' ], name: item[ 'name' ] } );
+                }
+            } );
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="THREEDATA 1GB" value="1" />
-                    <Picker.Item label="THREEDATA 2GB" value="2" />
-                    <Picker.Item label="THREEDATA 3GB" value="3" />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    { data.map( function ( item, key ) {
+                        return (
+                            <Picker.Item key={ key } label={ item[ 'name' ] } value={ item[ 'code' ] } />
+                        );
+                    } ) }
                 </Picker>
             );
         } else {
+            data = [];
             return (
-                <Picker note mode="dropdown" style={ { width: 120 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
-                    <Picker.Item label="Type Nomer tidak terdekteksi" value={ null } />
+                <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
+                    <Picker.Item label="Provider tidak di temukan" value={ null } />
                 </Picker>
             );
         }
@@ -328,7 +403,8 @@ export default class PulseScreen extends React.Component {
             );
         } else {
             return (
-                <Text style={ { textAlign: 'center' } }>Masukkan Nomer Ponsel yang benar</Text>
+                <Image source={ require( '../assets/images/icon.png' ) }
+                    style={ { flex: 1, width: '100%', height: 55, resizeMode: 'contain', alignSelf: 'center' } } />
             );
         }
     }
@@ -351,7 +427,7 @@ export default class PulseScreen extends React.Component {
     render () {
         if ( this.state.isLoading ) {
             return (
-                <View style={ [ Styles.container, { backgroundColor: '#fbb5fd' } ] }>
+                <View style={ [ Styles.container, { backgroundColor: '#f27e95' } ] }>
                     <View style={ [ Styles.container, Styles.justifyContentCenter ] }>
                         <Spinner color='#fff' />
                     </View>
@@ -363,16 +439,16 @@ export default class PulseScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#fbb5fd' } } >
+                            <Header style={ { backgroundColor: '#f27e95' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
                                         <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title><Icon active type='MaterialCommunityIcons' name='cellphone-basic' style={ { color: '#fff' } } /> Pulsa</Title>
+                                    <Title>PULSA</Title>
                                 </Body>
-                                <Body style={ { alignItems: 'flex-end' } }></Body>
+
                             </Header>
                             <Content style={ { flex: 1 } }>
                                 <Card>
@@ -382,7 +458,7 @@ export default class PulseScreen extends React.Component {
                                     <CardItem>
                                         <Left>
                                             <Icon active type='Feather' name='smartphone' size={ 25 } />
-                                            <Text>No HP</Text>
+                                            <Text>No Ponsel</Text>
                                         </Left>
                                         <Right>
                                             <Text>{ this.state.dataRequest.NoHP }</Text>
@@ -441,16 +517,16 @@ export default class PulseScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#fbb5fd' } } >
+                            <Header style={ { backgroundColor: '#f27e95' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
                                         <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title><Icon active type='MaterialCommunityIcons' name='cellphone-basic' style={ { color: '#fff' } } /> Pulsa</Title>
+                                    <Title>PULSA</Title>
                                 </Body>
-                                <Body style={ { alignItems: 'flex-end' } }></Body>
+
                             </Header>
                             <Content style={ { flex: 1 } }>
                                 <Text>{ '\n' }</Text>
@@ -462,16 +538,16 @@ export default class PulseScreen extends React.Component {
                                             <Col>
                                                 <Button transparent block onPress={ () => { this.setState( { type: 1 } ) } }>
                                                     <Row>
-                                                        <Col size={ 2 }><Radio selected={ this.state.type == 1 ? true : false } /></Col>
-                                                        <Col size={ 8 }><Text>Reguler</Text></Col>
+                                                        <Col size={ 2 }><Radio selected={ this.state.type == 1 ? true : false } onPress={ () => { this.setState( { type: 1 } ) } } selectedColor='#f27e95' /></Col>
+                                                        <Col size={ 8 }><Text style={ { color: '#f27e95' } }>Reguler</Text></Col>
                                                     </Row>
                                                 </Button>
                                             </Col>
                                             <Col>
                                                 <Button transparent block onPress={ () => { this.setState( { type: 2 } ) } }>
                                                     <Row>
-                                                        <Col size={ 2 }><Radio selected={ this.state.type == 2 ? true : false } /></Col>
-                                                        <Col size={ 8 }><Text>DATA</Text></Col>
+                                                        <Col size={ 2 }><Radio selected={ this.state.type == 2 ? true : false } onPress={ () => { this.setState( { type: 2 } ) } } selectedColor='#f27e95' /></Col>
+                                                        <Col size={ 8 }><Text style={ { color: '#f27e95' } }>DATA</Text></Col>
                                                     </Row>
                                                 </Button>
                                             </Col>
@@ -484,7 +560,7 @@ export default class PulseScreen extends React.Component {
                                         error={ this.state.phone.length >= 4 && this.state.phone.length < 10 ? true : false }
                                         success={ this.state.phone.length >= 10 ? true : false }>
                                         <Icon active type='FontAwesome' name='mobile-phone' />
-                                        <Label>Nomer Ponsel</Label>
+                                        <Label>Nomor Ponsel</Label>
                                         <Input keyboardType='numeric' value={ String( this.state.phone ) }
                                             onChangeText={ ( phone ) => this.seePhoneNumber( phone ) } />
                                     </Item>

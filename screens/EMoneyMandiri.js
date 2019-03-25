@@ -9,13 +9,9 @@ import {
     Button,
     Container,
     Content,
-    ListItem,
     Left,
-    Radio,
     Right,
     Text,
-    Row,
-    Col,
     Card,
     CardItem,
     Form,
@@ -29,7 +25,7 @@ import Config from '../components/model/Config';
 import PLNController from '../components/controller/PNLController';
 import ProductController from '../components/controller/ProductController';
 
-export default class PLNScreen extends React.Component {
+export default class EMoneyMandiri extends React.Component {
     constructor ( props ) {
         super( props );
         this.handleBackButtonClick = this.handleBackButtonClick.bind( this );
@@ -42,7 +38,8 @@ export default class PLNScreen extends React.Component {
             balance: 0,
             phone: '',
             token: '',
-            nominal: 'PLN20',
+            type: 1,
+            nominal: '',
             dataRequest: [],
             product: [],
         }
@@ -73,7 +70,7 @@ export default class PLNScreen extends React.Component {
 
     async sendDataRequest () {
         this.setState( { isLoading: true } );
-        if ( this.state.phone.length >= 10 && this.state.token.length >= 11 && this.state.nominal != null ) {
+        if ( this.state.phone.length >= 10 && this.state.token.length >= 8 && this.state.nominal != null ) {
             let setType = this.state.nominal;
             let data = await PLNController.prototype.Request( this.state.username, this.state.code, this.state.phone.replace( /-/g, '' ).replace( '+62', '0' ).replace( ' ', '' ), this.state.token, setType );
             if ( data.Status == 0 ) {
@@ -88,7 +85,7 @@ export default class PLNScreen extends React.Component {
             }
         } else if ( this.state.phone.length < 10 ) {
             Config.prototype.newAlert( 2, 'Nomor ponsel yang anda masukkan kurang dari 10 digit', 10000, "top" );
-        } else if ( this.state.token.length < 11 ) {
+        } else if ( this.state.token.length < 8 ) {
             Config.prototype.newAlert( 2, 'Nomor meter yang anda masukkan kurang dari 11 digit', 10000, "top" );
         } else {
             Config.prototype.newAlert( 3, 'Transaksi gagal diproses', 10000, "top" );
@@ -166,7 +163,7 @@ export default class PLNScreen extends React.Component {
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>PLN</Title>
+                                    <Title>E-TOLL</Title>
                                 </Body>
 
                             </Header>
@@ -187,7 +184,7 @@ export default class PLNScreen extends React.Component {
                                     <CardItem>
                                         <Left>
                                             <Icon active type='MaterialCommunityIcons' name='package' />
-                                            <Text>Nomor Meter</Text>
+                                            <Text>Nomor E-Toll</Text>
                                         </Left>
                                         <Right>
                                             <Text>{ this.state.dataRequest.IdPel }</Text>
@@ -243,9 +240,9 @@ export default class PLNScreen extends React.Component {
                 );
             } else {
                 let data = [];
-                this.state.product[ 'PLN' ].map( function ( item, key ) {
-                    if ( item[ 'type' ] == 'TOKEN' ) {
-                        data.push( { code: item[ 'code' ], name: 'Rp ' + item[ 'code' ].replace( 'PLN', '' ) + '.000' } );
+                this.state.product[ 'ETOLL' ].map( function ( item, key ) {
+                    if ( item[ 'type' ] == 'MANDIRI' ) {
+                        data.push( { code: item[ 'code' ], name: item[ 'name' ] } );
                     }
                 } );
                 return (
@@ -259,7 +256,7 @@ export default class PLNScreen extends React.Component {
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>PLN</Title>
+                                    <Title>E-Mandiri</Title>
                                 </Body>
 
                             </Header>
@@ -274,17 +271,17 @@ export default class PLNScreen extends React.Component {
                                     </Item>
                                     <Text>{ '\n' }</Text>
                                     <Item floatingLabel style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }
-                                        error={ this.state.token.length >= 1 && this.state.token.length < 11 ? true : false }
-                                        success={ this.state.token.length >= 11 ? true : false }>
+                                        error={ this.state.token.length >= 1 && this.state.token.length < 8 ? true : false }
+                                        success={ this.state.token.length >= 8 ? true : false }>
                                         <Icon active type='MaterialCommunityIcons' name='scale-bathroom' />
-                                        <Label>Nomor Meter</Label>
+                                        <Label>E-Money Mandiri</Label>
                                         <Input keyboardType='numeric' value={ String( this.state.token ) } onChangeText={ ( token ) => this.setState( { token } ) } />
                                     </Item>
                                     <Text>{ '\n' }</Text>
                                     <Text>{ '\n' }</Text>
                                     <Item style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }>
                                         <Icon active type='MaterialCommunityIcons' name='package' />
-                                        <Label>Token</Label>
+                                        <Label>Produk</Label>
                                         <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
                                             { data.map( function ( item, key ) {
                                                 return (

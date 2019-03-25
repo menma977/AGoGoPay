@@ -11,7 +11,7 @@ export default class HeaderNavigationBar extends Component {
 
   render () {
     return (
-      <Header style={ { backgroundColor: '#fbb5fd' } } hasTabs >
+      <Header style={ { backgroundColor: '#f27e95' } } hasTabs >
         <Body style={ { alignItems: 'flex-start' } }>
           <Title>
             {/* <Icon.MaterialCommunityIcons name='view-list' size={ 20 } /> */ }
