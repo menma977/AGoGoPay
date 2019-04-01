@@ -15,9 +15,20 @@ import EMoneyMandiri from '../screens/EMoneyMandiri';
 import EMoneyBNIScreen from '../screens/EMoneyBNIScreen';
 import WifiScreen from '../screens/WifiScreen';
 import PLNPascaScreen from '../screens/PLNPascaScreen';
-import TVScreen from '../screens/TVScreen';
 import BPJSScreen from '../screens/BPJSScreen';
 import PaymentScreen from '../screens/PaymentScreen';
+import BotScreen from '../screens/bot/BotScreen';
+import FibonacciScreen from '../screens/bot/FibonacciScreen';
+import FibonacciBot from '../screens/bot/FibonacciBot';
+import MartinAngelScreen from '../screens/bot/MartinAngelScreen';
+import LabouchereScreen from '../screens/bot/LabouchereScreen';
+import MartinAngelBot from '../screens/bot/MartinAngelBot';
+import LabouchereBot from '../screens/bot/LabouchereBot';
+import DepositScreen from '../screens/DepositScreen';
+import PulsePascaScreen from '../screens/PulsePascaScreen';
+import PDAMScreen from '../screens/PDAMScreen';
+import MultyFScreen from '../screens/MultyFScreen';
+import InusernScreen from '../screens/InusernScreen';
 
 export default createAppContainer( createSwitchNavigator( {
   // You could add another route here for authentication.
@@ -28,8 +39,21 @@ export default createAppContainer( createSwitchNavigator( {
   WebViewTab: WebViewTab,
   Logger: LoggerScreen,
   Financial: FinancialScreen,
+  Deposit: DepositScreen,
+  bot: BotScreen,
+  martinAngel: MartinAngelScreen,
+  fibonacci: FibonacciScreen,
+  labouchere: LabouchereScreen,
+
+  fibonacciBot: FibonacciBot,
+  martinAngelBot: MartinAngelBot,
+  labouchereBot: LabouchereBot,
 
   pulse: PulseScreen,
+  pulsePasca: PulsePascaScreen,
+  insuren: InusernScreen,
+  multyF: MultyFScreen,
+  PDAM: PDAMScreen,
   PLN: PLNScreen,
   PLNPasca: PLNPascaScreen,
   ovo: OvoScreen,
@@ -38,7 +62,6 @@ export default createAppContainer( createSwitchNavigator( {
   eMoneyMandiri: EMoneyMandiri,
   eMoneyBNI: EMoneyBNIScreen,
   wifi: WifiScreen,
-  tv: TVScreen,
   bpjs: BPJSScreen,
   payment: PaymentScreen
 } ) );

@@ -19,6 +19,7 @@ import {
 import Header from '../navigation/HeaderNavigationBar';
 import Styles from '../constants/Styles';
 import HomeTab from './tab/HomeTab';
+import FinancialScreen from './FinancialScreen';
 
 export default class HomeScreen extends React.Component {
     constructor ( props ) {
@@ -37,9 +38,9 @@ export default class HomeScreen extends React.Component {
     render () {
         if ( this.state.isLoading ) {
             return (
-                <View style={ [ Styles.container, { backgroundColor: '#f27e95' } ] }>
+                <View style={ [ Styles.container, { backgroundColor: '#ffffffff' } ] }>
                     <View style={ [ Styles.container, Styles.justifyContentCenter ] }>
-                        <Spinner color='#fff' />
+                        <Spinner color='#4b3854ff' />
                     </View>
                 </View>
             );
@@ -72,37 +73,42 @@ export default class HomeScreen extends React.Component {
             ];
             return (
                 <Container>
-                    <Header { ...this.props } name='AGOGOGPAY' />
+                    <Header { ...this.props } />
                     {/* load tab above header */ }
-                    <Tabs>
-                        <Tab heading='Home' tabStyle={ { backgroundColor: '#f27e95' } } activeTabStyle={ { backgroundColor: '#F9B3C3' } } textStyle={ { color: '#fff' } }>
+                    <Tabs tabContainerStyle={ { height: 30 } }>
+                        <Tab heading='Home' tabStyle={ { backgroundColor: '#ffffffff' } } activeTabStyle={ { backgroundColor: '#ffffffff' } } textStyle={ { color: '#f0edf1ff' } } activeTextStyle={ { color: '#4b3854ff' } }>
                             {/* load HomeTab */ }
                             <HomeTab { ...this.props } />
                             {/* /load HomeTab */ }
                         </Tab>
-                        <Tab heading='Help' tabStyle={ { backgroundColor: '#f27e95' } } activeTabStyle={ { backgroundColor: '#F9B3C3' } } textStyle={ { color: '#fff' } }>
+                        <Tab heading='Financial' tabStyle={ { backgroundColor: '#ffffffff' } } activeTabStyle={ { backgroundColor: '#ffffffff' } } textStyle={ { color: '#f0edf1ff' } } activeTextStyle={ { color: '#4b3854ff' } }>
+                            <Button info block onPress={ () => this.props.navigation.navigate( 'Financial' ) }>
+                                <Text>Financial</Text>
+                            </Button>
+                        </Tab>
+                        <Tab heading='Help' tabStyle={ { backgroundColor: '#ffffffff' } } activeTabStyle={ { backgroundColor: '#ffffffff' } } textStyle={ { color: '#f0edf1ff' } } activeTextStyle={ { color: '#4b3854ff' } }>
                             <Tabs>
-                                <Tab heading='How To Use' tabStyle={ { backgroundColor: '#f27e95' } } activeTabStyle={ { backgroundColor: '#F9B3C3' } } textStyle={ { color: '#fff' } }>
+                                <Tab heading='How To Use' tabStyle={ { backgroundColor: '#ffffffff' } } activeTabStyle={ { backgroundColor: '#ffffffff' } } textStyle={ { color: '#f0edf1ff' } } activeTextStyle={ { color: '#4b3854ff' } }>
                                     <Container>
                                         <Content padder>
-                                            <Accordion dataArray={ howToUse } icon="add" expandedIcon="remove" iconStyle={ { color: '#fff' } }
-                                                expandedIconStyle={ { color: '#F9B3C3' } } headerStyle={ { backgroundColor: '#f27e95' } }
-                                                contentStyle={ { backgroundColor: '#fff' } } style={ { color: '#fff' } } />
+                                            <Accordion dataArray={ howToUse } icon="add" expandedIcon="remove" iconStyle={ { color: '#4b3854ff' } }
+                                                expandedIconStyle={ { color: '#4b3854ff' } } headerStyle={ { backgroundColor: '#ffffffff' } }
+                                                contentStyle={ { backgroundColor: '#ffffffff' } } style={ { color: '#4b3854ff' } } />
                                         </Content>
                                     </Container>
                                 </Tab>
-                                <Tab heading='Criticism And Suggestions' tabStyle={ { backgroundColor: '#f27e95' } } activeTabStyle={ { backgroundColor: '#F9B3C3' } } textStyle={ { color: '#fff' } }>
+                                <Tab heading='Criticism And Suggestions' tabStyle={ { backgroundColor: '#ffffffff' } } activeTabStyle={ { backgroundColor: '#ffffffff' } } textStyle={ { color: '#f0edf1ff' } } activeTextStyle={ { color: '#4b3854ff' } }>
                                     <Container>
                                         <Content>
                                             <Card>
-                                                <CardItem style={ { backgroundColor: '#f27e95' } } header>
-                                                    <Text style={ { color: '#fff' } }>Criticism And Suggestions</Text>
+                                                <CardItem style={ { backgroundColor: '#ffffffff' } } header>
+                                                    <Text style={ { color: '#4b3854ff' } }>Criticism And Suggestions</Text>
                                                 </CardItem>
                                                 <CardItem>
                                                     <Body>
                                                         <Row>
                                                             <Col size={ 4 }>
-                                                                <Icon type='Entypo' name='email' size={ 30 } style={ { color: '#f27e95' } } />
+                                                                <Icon type='Entypo' name='email' size={ 30 } style={ { color: '#4b3854ff' } } />
                                                             </Col>
                                                             <Col size={ 8 }>
                                                                 <Button transparent onPress={ () => Linking.openURL( 'mailto:email@gmail.com' ) } title="email@gmail.com">
@@ -112,7 +118,7 @@ export default class HomeScreen extends React.Component {
                                                         </Row>
                                                         <Row>
                                                             <Col size={ 4 }>
-                                                                <Icon type='FontAwesome' name='whatsapp' size={ 30 } style={ { color: '#f27e95' } } />
+                                                                <Icon type='FontAwesome' name='whatsapp' size={ 30 } style={ { color: '#4b3854ff' } } />
                                                             </Col>
                                                             <Col size={ 8 }>
                                                                 <Button transparent onPress={ () => Linking.openURL( 'whatsapp://send?phone=+6282234468232' ) }>

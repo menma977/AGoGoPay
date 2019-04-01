@@ -22,7 +22,7 @@ export default class App extends React.Component {
       return (
         // set root from native base
         <Root style={ styles.container }>
-          <StatusBar barStyle='default' />
+          <StatusBar barStyle='dark-content' />
           <AppNavigator />
         </Root>
         // /set root from native base

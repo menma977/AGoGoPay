@@ -24,7 +24,7 @@ import Styles from '../constants/Styles';
 import Config from '../components/model/Config';
 import PaymentController from '../components/controller/PaymentController';
 
-export default class TVScreen extends React.Component {
+export default class PulsePascaScreen extends React.Component {
     constructor ( props ) {
         super( props );
         this.handleBackButtonClick = this.handleBackButtonClick.bind( this );
@@ -36,7 +36,7 @@ export default class TVScreen extends React.Component {
             code: '',
             balance: 0,
             phone: '',
-            nominal: 'TKBIG;2',
+            nominal: 'HPTSEL;2',
             idClient: '',
             dataRequest: [],
             product: [],
@@ -62,44 +62,14 @@ export default class TVScreen extends React.Component {
             code: await AsyncStorage.getItem( 'code' ),
             balance: await AsyncStorage.getItem( 'balance' ),
             product: [
-                { code: 'TKBIG;2', name: 'BIG TV' },
-                { code: 'TKGEN100;2', name: 'GENFLIX (100.000)' },
-                { code: 'TKGEN25;2', name: 'GENFLIX (25.000)' },
-                { code: 'TKGEN50;2', name: 'GENFLIX (50.000)' },
-                { code: 'TKINDVS;2', name: 'INDOVISION, TOPTV, OKEVISION' },
-                { code: 'TKINNOV;2', name: 'INNOVATE TV' },
-                { code: 'TKKV1000;2', name: 'K VISION (1.000.000)' },
-                { code: 'TKKV100;2', name: 'K VISION (100.000)' },
-                { code: 'TKKV125;2', name: 'K VISION (125.000)' },
-                { code: 'TKKV150;2', name: 'K VISION (150.000)' },
-                { code: 'TKKV175;2', name: 'K VISION (175.000)' },
-                { code: 'TKKV200;2', name: 'K VISION (200.000)' },
-                { code: 'TKKV250;2', name: 'K VISION (250.000)' },
-                { code: 'TKKV300;2', name: 'K VISION (300.000)' },
-                { code: 'TKKV50;2', name: 'K VISION (50.000)' },
-                { code: 'TKKV500;2', name: 'K VISION (500.000)' },
-                { code: 'TKKV75;2', name: 'K VISION (75.000)' },
-                { code: 'TKKV750;2', name: 'K VISION (750.000)' },
-                { code: 'TKNEX;2', name: 'NEX MEDIA' },
-                { code: 'TKORG100;2', name: 'ORANGE TV (100.000)' },
-                { code: 'TKORG300;2', name: 'ORANGE TV (300.000)' },
-                { code: 'TKORG50;2', name: 'ORANGE TV (50.000)' },
-                { code: 'TKORG80;2', name: 'ORANGE TV (80.000)' },
-                { code: 'TKORANGE;2', name: 'ORANGE TV POSTPAID' },
-                { code: 'TKSKYDEL1;2', name: 'SKYNINDO TV DELUXE 1 BLN (80.000)' },
-                { code: 'TKSKYDEL12;2', name: 'SKYNINDO TV DELUXE 12 BLN (960.000)' },
-                { code: 'TKSKYDEL3;2', name: 'SKYNINDO TV DELUXE 3 BLN (240.000)' },
-                { code: 'TKSKYDEL6;2', name: 'SKYNINDO TV DELUXE 6 BLN (480.000)' },
-                { code: 'TKSKYFAM1;2', name: 'SKYNINDO TV FAMILY 1 BLN (40.000)' },
-                { code: 'TKSKYFAM12;2', name: 'SKYNINDO TV FAMILY 12 BLN (480.000)' },
-                { code: 'TKSKYFAM3;2', name: 'SKYNINDO TV FAMILY 3 BLN (120.000)' },
-                { code: 'TKSKYFAM6;2', name: 'SKYNINDO TV FAMILY 6 BLN (240.000)' },
-                { code: 'TKSKYMAN1;2', name: 'SKYNINDO TV MANDARIN 1 BLN (140.000)' },
-                { code: 'TKSKYMAN12;2', name: 'SKYNINDO TV MANDARIN 12 BLN (1.680.000)' },
-                { code: 'TKSKYMAN3;2', name: 'SKYNINDO TV MANDARIN 3 BLN (420.000)' },
-                { code: 'TKSKYMAN6;2', name: 'SKYNINDO TV MANDARIN 6 BLN (840.000)' },
-                { code: 'TKTOPAS;2', name: 'TOPAS TV' },
-                { code: 'TKTLKMV;2', name: 'TRANSVISION, TELKOMVISION, YESTV' },
+                // HP Pascabayar
+                { code: 'HPTSEL;2', name: 'TELKOMSEL HALO' },
+                { code: 'HPXL;2', name: 'XL (XPLOR)' },
+                { code: 'HPMTRIX;2', name: 'INDOSAT (MATRIX)' },
+                { code: 'HPTHREE;2', name: 'THREE (POSTPAID)' },
+                { code: 'HPSMART;2', name: 'SMARTFREN (POSTPAID)' },
+                { code: 'HPESIA;2', name: 'ESIA (POSTPAID)' },
+                { code: 'HPFREN;2', name: 'FREN, MOBI (POSTPAID)' },
             ],
         } );
         this.setState( { isLoading: false } );
@@ -114,7 +84,7 @@ export default class TVScreen extends React.Component {
             if ( data.Status == 0 ) {
                 this.setState( { switchView: true, dataRequest: data } );
             } else if ( data.Status == 1 ) {
-                Config.prototype.newAlert( 3, data.Pesan, 10000, "top" );
+                Config.prototype.newAlert( 3, data.Pesan, 10000, 'top' );
                 this.setState( { switchView: false } );
             } else {
                 AsyncStorage.clear();
@@ -122,11 +92,11 @@ export default class TVScreen extends React.Component {
                 this.props.navigation.navigate( 'Login' );
             }
         } else if ( this.state.phone.length < 10 ) {
-            Config.prototype.newAlert( 2, 'Nomor ponsel yang anda masukkan kurang dari 10 digit', 10000, "top" );
+            Config.prototype.newAlert( 2, 'Nomor ponsel yang anda masukkan kurang dari 10 digit', 10000, 'top' );
         } else if ( this.state.idClient.length < 8 ) {
-            Config.prototype.newAlert( 2, 'Nomor meter yang anda masukkan kurang dari 11 digit', 10000, "top" );
+            Config.prototype.newAlert( 2, 'Nomor meter yang anda masukkan kurang dari 11 digit', 10000, 'top' );
         } else {
-            Config.prototype.newAlert( 3, 'Transaksi gagal diproses', 10000, "top" );
+            Config.prototype.newAlert( 3, 'Transaksi gagal diproses', 10000, 'top' );
         }
         this.setState( { isLoading: false } );
     }
@@ -155,11 +125,11 @@ export default class TVScreen extends React.Component {
                 nominal: 5,
                 phone: '',
             } );
-            Config.prototype.newAlert( 1, data.Pesan, 10000, "top" );
+            Config.prototype.newAlert( 1, data.Pesan, 10000, 'top' );
             this.setState( { switchView: false } );
             this.componentDidMount();
         } else if ( data.Status == 1 ) {
-            Config.prototype.newAlert( 2, data.Pesan, 10000, "top" );
+            Config.prototype.newAlert( 2, data.Pesan, 10000, 'top' );
             this.setState( { switchView: false } );
         } else {
             AsyncStorage.clear();
@@ -186,9 +156,9 @@ export default class TVScreen extends React.Component {
     render () {
         if ( this.state.isLoading ) {
             return (
-                <View style={ [ Styles.container, { backgroundColor: '#f27e95' } ] }>
+                <View style={ [ Styles.container, { backgroundColor: '#ffffffff' } ] }>
                     <View style={ [ Styles.container, Styles.justifyContentCenter ] }>
-                        <Spinner color='#fff' />
+                        <Spinner color='#4b3854ff' />
                     </View>
                 </View>
             );
@@ -198,16 +168,15 @@ export default class TVScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#f27e95' } } >
+                            <Header style={ { backgroundColor: '#ffffffff' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
-                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
+                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#4b3854ff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>TV</Title>
+                                    <Title style={ { color: '#4b3854ff' } }>Pulsa Pascabayar</Title>
                                 </Body>
-
                             </Header>
                             <Content style={ { flex: 1 } }>
                                 <Card>
@@ -298,13 +267,13 @@ export default class TVScreen extends React.Component {
                                     <CardItem footer>
                                         <Left>
                                             <Button rounded block success style={ { alignSelf: 'center' } } onPress={ () => { this.setState( { switchView: false } ) } }>
-                                                <Icon type='Entypo' name='back' size={ 25 } color='#fff' />
+                                                <Icon type='Entypo' name='back' size={ 25 } color='#4b3854ff' />
                                                 <Text>Kembali</Text>
                                             </Button>
                                         </Left>
                                         <Right>
                                             <Button rounded block success style={ { alignSelf: 'center' } } onPress={ this.buyData.bind( this ) }>
-                                                <Icon type='Entypo' name='shopping-cart' size={ 25 } color='#fff' />
+                                                <Icon type='Entypo' name='shopping-cart' size={ 25 } color='#4b3854ff' />
                                                 <Text>Beli</Text>
                                             </Button>
                                         </Right>
@@ -321,20 +290,19 @@ export default class TVScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#f27e95' } } >
+                            <Header style={ { backgroundColor: '#ffffffff' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
-                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
+                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#4b3854ff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>TV</Title>
+                                    <Title style={ { color: '#4b3854ff' } }>Pulsa Pascabayar</Title>
                                 </Body>
-
                             </Header>
                             <Content style={ { flex: 1 } }>
                                 <Form style={ [ Styles.alignItemCenter ] }>
-                                    <Item floatingLabel style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }
+                                    <Item floatingLabel style={ { width: '85%', alignSelf: 'center', backgroundColor: '#ffffffff' } }
                                         error={ this.state.phone.length >= 4 && this.state.phone.length < 10 ? true : false }
                                         success={ this.state.phone.length >= 10 ? true : false }>
                                         <Icon active type='FontAwesome' name='mobile-phone' />
@@ -342,7 +310,7 @@ export default class TVScreen extends React.Component {
                                         <Input keyboardType='numeric' value={ String( this.state.phone ) } onChangeText={ ( phone ) => this.setState( { phone } ) } />
                                     </Item>
                                     <Text>{ '\n' }</Text>
-                                    <Item floatingLabel style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }
+                                    <Item floatingLabel style={ { width: '85%', alignSelf: 'center', backgroundColor: '#ffffffff' } }
                                         error={ this.state.idClient.length >= 1 && this.state.idClient.length < 8 ? true : false }
                                         success={ this.state.idClient.length >= 8 ? true : false }>
                                         <Icon active type='FontAwesome' name='user-o' />
@@ -351,7 +319,7 @@ export default class TVScreen extends React.Component {
                                     </Item>
                                     <Text>{ '\n' }</Text>
                                     <Text>{ '\n' }</Text>
-                                    <Item style={ { width: '85%', alignSelf: 'center', backgroundColor: '#fff' } }>
+                                    <Item style={ { width: '85%', alignSelf: 'center', backgroundColor: '#ffffffff' } }>
                                         <Icon active type='MaterialCommunityIcons' name='package' />
                                         <Label>Produk</Label>
                                         <Picker note mode="dropdown" style={ { width: 395 } } selectedValue={ this.state.nominal } onValueChange={ ( nominal ) => this.setState( { nominal } ) }>
@@ -369,7 +337,7 @@ export default class TVScreen extends React.Component {
                                 <Text>{ '\n' }</Text>
                                 <Button rounded block success style={ { width: '90%', alignSelf: 'center' } }
                                     onPress={ this.sendDataRequest.bind( this ) } disabled={ this.state.phone < 10 && this.state.idClient < 11 }>
-                                    <Icon type='Entypo' name='shopping-cart' size={ 25 } color='#fff' />
+                                    <Icon type='Entypo' name='shopping-cart' size={ 25 } color='#4b3854ff' />
                                     <Text>Lajut Ke Pembelian</Text>
                                 </Button>
                                 <Text>{ '\n' }</Text>

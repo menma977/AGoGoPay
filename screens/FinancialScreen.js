@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, WebView, KeyboardAvoidingView, BackHandler, AsyncStorage, RefreshControl, ScrollView } from 'react-native';
 import {
-    Spinner,
+    Spinner, Card, CardItem,
 } from 'native-base';
 import Styles from '../constants/Styles';
 
@@ -48,20 +48,21 @@ export default class FinancialScreen extends React.Component {
     render () {
         if ( this.state.isLoading ) {
             return (
-                <View style={ [ Styles.container, { backgroundColor: '#f27e95' } ] }>
+                <View style={ [ Styles.container, { backgroundColor: '#ffffffff' } ] }>
                     <View style={ [ Styles.container, Styles.justifyContentCenter ] }>
-                        <Spinner color='#fff' />
+                        <Spinner color='#4b3854ff' />
                     </View>
                 </View>
             );
         } else {
             return (
-                <KeyboardAvoidingView behavior="padding" style={ { flex: 1, backgroundColor: '#f27e95' } } >
-                    <ScrollView style={ { backgroundColor: '#f27e95', flex: 1, top: 20, } }
-                        refreshControl={ <RefreshControl
-                            refreshing={ this.state.isLoading } onRefresh={ this.onRefresh.bind( this ) } /> }>
+                <KeyboardAvoidingView behavior="padding" style={ { flex: 1, backgroundColor: '#ffffffff' } } >
+                    <ScrollView style={ { backgroundColor: '#ffffffff', flex: 1, top: 20, } }
+                        showsHorizontalScrollIndicator={ true }
+                        refreshControl={ <RefreshControl refreshing={ this.state.isLoading } onRefresh={ this.onRefresh.bind( this ) } /> }>
                         {/* load Web View */ }
-                        <WebView style={ { minHeight: 10000, height: '100%', flex: 1 } }
+                        <WebView style={ { minHeight: 1000, height: '100%', flex: 1 } }
+                            scalesPageToFit={ true }
                             source={ { uri: 'https://agogopay.com/api/financial.php?a=Financial&idlogin=' + this.state.code + '&username=' + this.state.username } } />
                         {/* /load Web View */ }
                     </ScrollView>

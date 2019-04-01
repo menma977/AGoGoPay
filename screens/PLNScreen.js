@@ -79,7 +79,7 @@ export default class PLNScreen extends React.Component {
             if ( data.Status == 0 ) {
                 this.setState( { switchView: true, dataRequest: data } );
             } else if ( data.Status == 1 ) {
-                Config.prototype.newAlert( 3, data.Pesan, 10000, "top" );
+                Config.prototype.newAlert( 3, data.Pesan, 10000, 'top' );
                 this.setState( { switchView: false } );
             } else {
                 AsyncStorage.clear();
@@ -87,11 +87,11 @@ export default class PLNScreen extends React.Component {
                 this.props.navigation.navigate( 'Login' );
             }
         } else if ( this.state.phone.length < 10 ) {
-            Config.prototype.newAlert( 2, 'Nomor ponsel yang anda masukkan kurang dari 10 digit', 10000, "top" );
+            Config.prototype.newAlert( 2, 'Nomor ponsel yang anda masukkan kurang dari 10 digit', 10000, 'top' );
         } else if ( this.state.token.length < 11 ) {
-            Config.prototype.newAlert( 2, 'Nomor meter yang anda masukkan kurang dari 11 digit', 10000, "top" );
+            Config.prototype.newAlert( 2, 'Nomor meter yang anda masukkan kurang dari 11 digit', 10000, 'top' );
         } else {
-            Config.prototype.newAlert( 3, 'Transaksi gagal diproses', 10000, "top" );
+            Config.prototype.newAlert( 3, 'Transaksi gagal diproses', 10000, 'top' );
         }
         this.setState( { isLoading: false } );
     }
@@ -116,11 +116,11 @@ export default class PLNScreen extends React.Component {
                 nominal: 5,
                 phone: '',
             } );
-            Config.prototype.newAlert( 1, data.Pesan, 10000, "top" );
+            Config.prototype.newAlert( 1, data.Pesan, 10000, 'top' );
             this.setState( { switchView: false } );
             this.componentDidMount();
         } else if ( data.Status == 1 ) {
-            Config.prototype.newAlert( 2, data.Pesan, 10000, "top" );
+            Config.prototype.newAlert( 2, data.Pesan, 10000, 'top' );
             this.setState( { switchView: false } );
         } else {
             AsyncStorage.clear();
@@ -147,9 +147,9 @@ export default class PLNScreen extends React.Component {
     render () {
         if ( this.state.isLoading ) {
             return (
-                <View style={ [ Styles.container, { backgroundColor: '#f27e95' } ] }>
+                <View style={ [ Styles.container, { backgroundColor: '#ffffffff' } ] }>
                     <View style={ [ Styles.container, Styles.justifyContentCenter ] }>
-                        <Spinner color='#fff' />
+                        <Spinner color='#4b3854ff' />
                     </View>
                 </View>
             );
@@ -159,14 +159,14 @@ export default class PLNScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#f27e95' } } >
+                            <Header style={ { backgroundColor: '#ffffffff' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
-                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
+                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#4b3854ff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>PLN</Title>
+                                    <Title style={ { color: '#4b3854ff' } }>PLN</Title>
                                 </Body>
 
                             </Header>
@@ -252,14 +252,14 @@ export default class PLNScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#f27e95' } } >
+                            <Header style={ { backgroundColor: '#ffff' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
-                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
+                                        <Icon type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#4b3854ff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>PLN</Title>
+                                    <Title style={ { color: '#4b3854ff' } }>PLN</Title>
                                 </Body>
 
                             </Header>

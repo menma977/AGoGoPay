@@ -5,6 +5,7 @@
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": [
+      "ios",
       "android"
     ],
     "version": "1.0.0",
@@ -12,7 +13,7 @@
     "icon": "./assets/images/icon.png",
     "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "cover",
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "updates": {
@@ -22,7 +23,10 @@
       "**/*"
     ],
     "android": {
-      "package": "com.agogopay"
+      "package": "com.agogopay.payment"
+    },
+    "ios": {
+      "supportsTablet": true
     }
   }
 }

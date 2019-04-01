@@ -15,11 +15,22 @@ import {
     Left,
     ListItem,
     List,
-    Right
+    Label,
+    Item,
+    Input,
+    H2,
 } from 'native-base';
 import BalanceController from '../../components/controller/BalanceController';
 import Styles from '../../constants/Styles';
 
+
+/**
+ *
+ *
+ * @export
+ * @class HomeTab
+ * @extends {React.Component}
+ */
 export default class HomeTab extends React.Component {
     constructor ( props ) {
         super( props );
@@ -27,272 +38,411 @@ export default class HomeTab extends React.Component {
             isLoading: true,
             balance: 0,
             username: '',
+            usernameDoge: null,
+            idBanner: 0,
+            banner: require( '../../assets/images/banner/banner1.jpg' ),
+            dataBanner: [
+                { id: 0, name: require( '../../assets/images/banner/banner1.jpg' ) },
+                { id: 1, name: require( '../../assets/images/banner/banner2.jpg' ) },
+            ]
         }
     }
 
     async componentDidMount () {
         this.setState( { isLoading: true } );
         let setUsername = await AsyncStorage.getItem( 'username' );
+        let setUsernameDoge = await AsyncStorage.getItem( 'usernameDoge' );
         let setCode = await AsyncStorage.getItem( 'code' );
         let data = await BalanceController.prototype.GetBalance( setUsername, setCode );
         if ( data.Status == 0 ) {
-            AsyncStorage.setItem( 'balance', String( data.Saldo ) );
-        } else if ( data == 2 ) {
+            AsyncStorage.setItem( 'balance', String( data.Saldo ? data.Saldo : 0 ) );
+        } else if ( data.Status == 2 ) {
+            setTimeout( () => {
+                Configuration.newAlert( 2, 'Sesi Login anda telah berakir tolong login lagi', 10000, 'top' );
+            }, 10000 );
             AsyncStorage.clear();
             Expo.Updates.reload();
             this.props.navigation.navigate( 'Login' );
         } else {
             AsyncStorage.setItem( 'balance', '0' );
         }
-        this.setState( { balance: await AsyncStorage.getItem( 'balance' ), username: setUsername } );
+        this.intervalManager( this );
+        this.setState( { balance: await AsyncStorage.getItem( 'balance' ), username: setUsername, usernameDoge: setUsernameDoge } );
         this.setState( { isLoading: false } );
+    }
+
+    intervalManager () {
+        let loopBanner = setInterval( () => {
+            try {
+                if ( this.state.idBanner == 1 ) {
+                    clearInterval( loopBanner );
+                    this.setState( {
+                        idBanner: this.state.dataBanner[ 0 ].id,
+                        banner: this.state.dataBanner[ 0 ].name,
+                    } );
+                    this.intervalManager( this );
+                } else {
+                    clearInterval( loopBanner );
+                    this.setState( {
+                        idBanner: this.state.dataBanner[ 1 ].id,
+                        banner: this.state.dataBanner[ 1 ].name,
+                    } );
+                    this.intervalManager( this );
+                }
+            } catch ( error ) {
+                clearInterval( loopBanner );
+            }
+        }, 5000 );
+    }
+
+    componentWillUnmount () {
+        this.state = [];
+    }
+
+    haveUserDoge () {
+        if ( this.state.usernameDoge ) {
+            return (
+                <Col>
+                    <Card style={ { height: 40 } } onTouchEnd={ () => this.props.navigation.navigate( 'bot' ) }>
+                        <CardItem style={ { height: 40 } } >
+                            <Image source={ require( '../../assets/images/icon/game_doge.png' ) }
+                                style={ { width: 20, height: 30, resizeMode: 'contain' } } />
+                            <Text style={ { color: '#4b3854ff' } }>{ '\t' }Game</Text>
+                        </CardItem>
+                    </Card>
+                </Col>
+            );
+        } else {
+            return;
+        }
     }
 
     render () {
         if ( this.state.isLoading ) {
             return (
-                <View style={ [ Styles.container, { backgroundColor: '#f27e95' } ] }>
+                <View style={ [ Styles.container, { backgroundColor: '#ffffffff' } ] }>
                     <View style={ [ Styles.container, Styles.justifyContentCenter ] }>
-                        <Spinner color='#fff' />
+                        <Spinner color='#4b3854ff' />
                     </View>
                 </View>
             );
         } else {
             return (
                 <Container>
-                    <Content style={ { backgroundColor: '#F9B3C3' } }>
-                        <List style={ { backgroundColor: '#f27e95' } }>
-                            <ListItem avatar>
-                                <Left>
-                                    <Icon type='MaterialIcons' name='account-balance-wallet'
-                                        style={ { color: '#fff', fontSize: 45, height: 50, width: 50, alignSelf: 'center' } } />
-                                </Left>
-                                <Body style={ { height: 70 } }>
-                                    <Text note style={ { color: '#fff', fontSize: 10 } }> SALDO</Text>
-                                    <Text style={ { fontSize: 20, color: '#fff' } }>Rp { this.state.balance },00</Text>
-                                </Body>
-                                <Right>
-                                    <Button transparent onPress={ this.componentDidMount.bind( this ) }
-                                        style={ { alignSelf: 'center' } }>
-                                        <Icon type='MaterialCommunityIcons' name='reload'
-                                            style={ { color: '#fff', fontSize: 45, height: 50, width: 50, alignSelf: 'center' } } />
-                                    </Button>
-                                </Right>
-                            </ListItem>
-                            <ListItem>
-                                <Row>
-                                    {/* Open Web View */ }
-                                    <Col>
-                                        <Card>
-                                            <CardItem>
-                                                <Body style={ { alignContent: 'center' } }>
-                                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'WebViewTab' ) }
-                                                        style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } }>
-                                                        <Icon type='MaterialCommunityIcons' name='web'
-                                                            style={ { fontSize: 45, width: 50, height: 50, alignSelf: 'center', color: '#f27e95' } } />
-                                                    </Button>
-                                                    <Text style={ { color: '#f27e95', fontSize: 10, alignSelf: 'center' } }>WEB</Text>
-                                                </Body>
-                                            </CardItem>
-                                        </Card>
-                                    </Col>
-                                    {/* /Open Web View */ }
-                                    {/* Open Deposit */ }
-                                    <Col>
-                                        <Card style={ { borderColor: '#f27e95' } }>
-                                            <CardItem>
-                                                <Body style={ { alignContent: 'center' } }>
-                                                    <Button transparent
-                                                        style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } }>
-                                                        <Icon type='MaterialCommunityIcons' name='finance'
-                                                            style={ { fontSize: 45, width: 50, height: 50, alignSelf: 'center', color: '#f27e95' } } />
-                                                    </Button>
-                                                    <Text style={ { color: '#f27e95', fontSize: 10, alignSelf: 'center' } }>Deposit</Text>
-                                                </Body>
-                                            </CardItem>
-                                        </Card>
-                                    </Col>
-                                    {/* /Open Deposit */ }
-                                    {/* Open Game */ }
-                                    <Col>
-                                        <Card style={ { borderColor: '#f27e95' } }>
-                                            <CardItem>
-                                                <Body style={ { alignContent: 'center' } }>
-                                                    <Button transparent
-                                                        style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } }>
-                                                        <Icon type='FontAwesome' name='gamepad'
-                                                            style={ { fontSize: 45, width: 50, height: 50, alignSelf: 'center', color: '#f27e95' } } />
-                                                    </Button>
-                                                    <Text style={ { color: '#f27e95', fontSize: 10, alignSelf: 'center' } }> Game</Text>
-                                                </Body>
-                                            </CardItem>
-                                        </Card>
-                                    </Col>
-                                    {/* /Open Game */ }
-                                </Row>
+                    <Content>
+                        <List style={ { height: 150 } }>
+                            <ImageBackground source={ require( '../../assets/images/icon/ungu.png' ) }
+                                style={ { width: '100%', height: 105 } }
+                                imageStyle={ { resizeMode: 'cover', width: '100%', height: '100%' } }>
+                                <ListItem noBorder avatar>
+                                    <Body style={ { height: 70 } }>
+                                        <Item floatingLabel style={ { borderColor: 'transparent', width: '90%' } } >
+                                            <Label note style={ { color: '#fff' } }> Balance</Label>
+                                            <Input style={ { fontSize: 20, color: '#fff' } } editable={ false }
+                                                value={ 'Rp ' + this.state.balance + ',00' } />
+                                            <Icon type='MaterialCommunityIcons' name='reload'
+                                                onPress={ this.componentDidMount.bind( this ) } style={ { color: '#fff' } } />
+                                        </Item>
+                                    </Body>
+                                </ListItem>
+                            </ImageBackground>
+                            <ListItem noBorder style={ { top: '-15%' } }>
+                                <Card style={ { borderRadius: 40, width: '100%', height: 60 } }>
+                                    <CardItem style={ { borderRadius: 40, height: 60 } } >
+                                        <Row style={ { width: '100%', height: 60 } }>
+                                            <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                <Button transparent onPress={ () => this.props.navigation.navigate( 'bot' ) }>
+                                                    <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                        <Icon type='Feather' name='arrow-up-circle'
+                                                            style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
+                                                        <Text style={ { color: '#4b3854ff', fontSize: 10 } }>Pay</Text>
+                                                    </Body>
+                                                </Button>
+                                            </Col>
+                                            <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                <Button transparent onPress={ () => this.props.navigation.navigate( 'Deposit' ) }>
+                                                    <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                        <Icon type='AntDesign' name='pluscircleo'
+                                                            style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
+                                                        <Text style={ { color: '#4b3854ff', fontSize: 10, alignSelf: 'center' } }>Top Up</Text>
+                                                    </Body>
+                                                </Button>
+                                            </Col>
+                                            <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                <Button transparent onPress={ () => this.props.navigation.navigate( 'Logger' ) }>
+                                                    <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                        <Icon type='AntDesign' name='clockcircleo'
+                                                            style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
+                                                        <Text style={ { color: '#4b3854ff', fontSize: 10, alignSelf: 'center' } }>History</Text>
+                                                    </Body>
+                                                </Button>
+                                            </Col>
+                                            <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                <Button transparent>
+                                                    <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                        <Icon type='Feather' name='more-horizontal'
+                                                            style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
+                                                        <Text style={ { color: '#4b3854ff', fontSize: 10, alignSelf: 'center' } }>More</Text>
+                                                    </Body>
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                    </CardItem>
+                                </Card>
                             </ListItem>
                         </List>
-                        <Row>
-                            {/* Open financial*/ }
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95' } }>
-                                    <CardItem style={ { backgroundColor: '#F9B3C3' } }>
-                                        <Body style={ { alignContent: 'center' } }>
-                                            <Button transparent onPress={ () => this.props.navigation.navigate( 'Financial' ) }
-                                                style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } }
-                                                disabled={ this.state.balance == 0 ? true : false }>
-                                                <Icon type='AntDesign' name='areachart'
-                                                    style={ { fontSize: 45, width: 50, height: 50, alignSelf: 'center', color: '#fff' } } />
+                        <Card transparent>
+                            <CardItem cardBody>
+                                <Image style={ { resizeMode: 'contain', width: '100%', height: 120 } }
+                                    source={ this.state.banner } />
+                            </CardItem>
+                        </Card>
+                        <Card transparent>
+                            <CardItem header>
+                                <H2>Entertainment</H2>
+                            </CardItem>
+                            <CardItem>
+                                <Row>
+                                    <Col>
+                                        <Card style={ { height: 40 } } onTouchEnd={ () => this.props.navigation.navigate( 'WebViewTab' ) }>
+                                            <CardItem style={ { height: 40 } } >
+                                                <ListItem noBorder icon style={ { left: '-100%' } }>
+                                                    <Left>
+                                                        <Button style={ { backgroundColor: "#4b3854ff" } }>
+                                                            <Icon type='MaterialCommunityIcons' name='web' />
+                                                        </Button>
+                                                    </Left>
+                                                    <Text style={ { color: '#4b3854ff' } }>WEB</Text>
+                                                </ListItem>
+                                            </CardItem>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card style={ { height: 40 } } onTouchEnd={ () => this.props.navigation.navigate( 'WebViewTab' ) }>
+                                            <CardItem style={ { height: 40 } } >
+                                                <Image source={ require( '../../assets/images/icon/film.png' ) }
+                                                    style={ { width: 20, height: 30, resizeMode: 'contain' } } />
+                                                <Text style={ { color: '#4b3854ff' } }>{ '\t' }Move</Text>
+                                            </CardItem>
+                                        </Card>
+                                    </Col>
+                                    { this.haveUserDoge() }
+                                </Row>
+                            </CardItem>
+                        </Card>
+                        <Card transparent>
+                            <CardItem header>
+                                <H2>Payment And Top Up</H2>
+                            </CardItem>
+                            <CardItem>
+                                {/* Line 1 */ }
+                                <Row>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'pulse' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 0 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/pulsa.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
                                             </Button>
-                                            <Text style={ { color: '#fff', fontSize: 10, alignSelf: 'center' } }>Financial</Text>
-                                        </Body>
-                                    </CardItem>
-                                </Card>
-                            </Col>
-                            {/* /Open financial */ }
-                            {/* Open Logger */ }
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95' } }>
-                                    <CardItem style={ { backgroundColor: '#F9B3C3' } }>
-                                        <Body style={ { alignContent: 'center' } }>
-                                            <Button transparent onPress={ () => this.props.navigation.navigate( 'Logger' ) }
-                                                style={ { width: 50, height: 50, resizeMode: 'contain', alignSelf: 'center' } }
-                                                disabled={ this.state.balance == 0 ? true : false }>
-                                                <Icon type='FontAwesome' name='bank'
-                                                    style={ { fontSize: 45, width: 50, height: 50, alignSelf: 'center', color: '#fff' } } />
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Pulsa Prabayar</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'pulsePasca' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/pascabayar.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
                                             </Button>
-                                            <Text style={ { color: '#fff', fontSize: 10, alignSelf: 'center' } }>Logger</Text>
-                                        </Body>
-                                    </CardItem>
-                                </Card>
-                            </Col>
-                            {/* /Open Logger */ }
-                        </Row>
-                        {/* Line 1 */ }
-                        <Row>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'pulse' ) }
-                                        style={ { width: '100%', height: '100%' } } disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/pulsa.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'PLN' ) }
-                                        style={ { width: '100%', height: '100%' } } disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/token_listrik.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'wifi' ) }
-                                        style={ { width: '100%', height: '100%' } } disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/wifi_modem.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'PLNPasca' ) }
-                                        style={ { width: '100%', height: '100%' } } disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/pln_pasca.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                        </Row>
-                        {/* /Line 1 */ }
-                        {/* Line 2 */ }
-                        <Row>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'ovo' ) }
-                                        style={ { width: '100%', height: '100%' } }
-                                        disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/ovo.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'gojek' ) }
-                                        style={ { width: '100%', height: '100%' } } disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/gojek.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'grab' ) }
-                                        style={ { width: '100%', height: '100%' } } disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/grab.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'eMoneyMandiri' ) }
-                                        style={ { width: '100%', height: '100%' } }
-                                        disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/emoney_mandiri.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                        </Row>
-                        {/* /Line 2 */ }
-                        {/* Line 3 */ }
-                        <Row>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'eMoneyBNI' ) }
-                                        style={ { width: '100%', height: '100%' } }
-                                        disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/emoney_bni.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'tv' ) }
-                                        style={ { width: '100%', height: '100%' } } disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/tv_kabel.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'bpjs' ) }
-                                        style={ { width: '100%', height: '100%' } } disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/bpjs.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card style={ { borderColor: '#f27e95', height: 80 } }>
-                                    <Button transparent onPress={ () => this.props.navigation.navigate( 'payment' ) }
-                                        style={ { width: '100%', height: '100%' } } disabled={ this.state.balance == 0 ? true : false }>
-                                        <Image source={ require( '../../assets/images/icon/payment.jpg' ) }
-                                            style={ { flex: 1, width: '100%', height: '120%', resizeMode: 'stretch' } } />
-                                    </Button>
-                                </Card>
-                            </Col>
-                        </Row>
-                        {/* /Line 3 */ }
-                    </Content >
-                </Container >
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Pulsa Pascabayar</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'PLN' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/token_listrik.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Token</Text>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Listrik</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'PLNPasca' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/taglis.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Tagihan</Text>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Listrik</Text>
+                                        </Card>
+                                    </Col>
+                                </Row>
+                                {/* /Line 1 */ }
+                            </CardItem>
+                            <CardItem>
+                                {/* Line 2 */ }
+                                <Row>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'ovo' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/ovo.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>OVO</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'grab' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/grap.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>GRAB</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'gojek' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/gopay.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>GoPay</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'PDAM' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/pdam.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>PDAM</Text>
+                                        </Card>
+                                    </Col>
+                                </Row>
+                                {/* /Line 2 */ }
+                            </CardItem>
+                            <CardItem>
+                                {/* Line 3 */ }
+                                <Row>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'multyF' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/finance.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Multi</Text>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Finance</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'eMoneyBNI' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/tapcash.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>TapCash</Text>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>BNI</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'eMoneyMandiri' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/emoney.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>e-Money</Text>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Mandiri</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'wifi' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/internet.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Internet &</Text>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>TV Kabel</Text>
+                                        </Card>
+                                    </Col>
+                                </Row>
+                                {/* /Line 3 */ }
+                            </CardItem>
+                            <CardItem>
+                                {/* Line 4 */ }
+                                <Row>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'bpjs' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/bpjs.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>BPJS</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'insuren' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/asuransi.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Asuransi</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button onPress={ () => this.props.navigation.navigate( 'payment' ) }
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/payment.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>Payment</Text>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card transparent style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button
+                                                style={ { width: 70, height: 70, backgroundColor: '#ffff', borderRadius: 50, alignItems: 'center', justifyContent: 'center' } }
+                                                disabled={ this.state.balance.replace( '.', '' ) == 25000 ? true : false }>
+                                                <Image source={ require( '../../assets/images/icon/more.png' ) }
+                                                    style={ { width: '60%', height: '60%', resizeMode: 'contain' } } />
+                                            </Button>
+                                            <Text style={ { color: '#4b3854ff', fontSize: 12, top: 8, textAlign: 'center' } }>More</Text>
+                                        </Card>
+                                    </Col>
+                                </Row>
+                                {/* /Line 4 */ }
+                            </CardItem>
+                        </Card>
+                    </Content>
+                </Container>
             );
         }
     }

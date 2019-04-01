@@ -58,8 +58,10 @@ export default class LoginScreen extends React.Component {
         } else {
             AsyncStorage.setItem( 'username', this.state.username );
             AsyncStorage.setItem( 'password', this.state.password );
+            AsyncStorage.setItem( 'usernameDoge', data.user99 ? data.user99 : null );
+            AsyncStorage.setItem( 'passwordDoge', data.pas99 ? data.pas99 : null );
             this.setState( { password: '', switchValidate: true, isLoading: false } );
-            Configuration.newAlert( 1, data.Pesan, 5000, "top" );
+            Configuration.newAlert( 1, data.Pesan, 5000, 'top' );
         }
     }
 
@@ -86,26 +88,26 @@ export default class LoginScreen extends React.Component {
 
     render () {
         if ( this.state.isLoading ) {
-            return ( <View style={ [ Styles.container, { backgroundColor: '#f27e95' } ] }>
+            return ( <View style={ [ Styles.container, { backgroundColor: '#ffff' } ] }>
                 <View style={ [ Styles.container, Styles.justifyContentCenter ] }>
-                    <Spinner color='#fff' />
+                    <Spinner color='#4b3854ff' />
                 </View>
             </View> );
         } else if ( this.state.switchValidate ) {
             return (
                 <ScrollView>
-                    <Container style={ { flex: 1, backgroundColor: '#f27e95' } }>
+                    <Container style={ { flex: 1, backgroundColor: '#ffff' } }>
                         <Content contentContainerStyle={ { flex: 1, paddingTop: 100 } }>
                             <Row>
                                 <Col size={ 4 }>
                                     <Form style={ [ Styles.alignItemCenter ] }>
                                         <Item rounded style={ { width: '80%', alignSelf: 'center', backgroundColor: '#fff' } }>
-                                            <Input style={ { color: '#f27e95', textAlign: 'center' } } placeholderTextColor='#f27e95' placeholder='CODE' value={ this.state.code } onChangeText={ ( code ) => this.setState( { code } ) } disabled />
+                                            <Input style={ { color: '#4b3854ff', textAlign: 'center' } } placeholderTextColor='#4b3854ff' placeholder='CODE' value={ this.state.code } onChangeText={ ( code ) => this.setState( { code } ) } disabled />
                                         </Item>
                                     </Form>
                                 </Col>
                                 <Col>
-                                    <Button iconLeft rounded onPress={ this.deleteCode.bind( this ) } style={ { backgroundColor: '#f27e95', height: 55, width: 60, justifyContent: 'center' } }>
+                                    <Button iconLeft rounded onPress={ this.deleteCode.bind( this ) } style={ { backgroundColor: '#4b3854ff', height: 55, width: 60, justifyContent: 'center' } }>
                                         <Text style={ { fontSize: 15 } }>DEL</Text>
                                     </Button>
                                 </Col>
@@ -113,54 +115,54 @@ export default class LoginScreen extends React.Component {
                             <Text>{ '\n' }</Text>
                             <Row style={ { alignItems: 'center', left: 30, right: 30 } }>
                                 <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '1' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>1</Text>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '1' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>1</Text>
                                     </Button>
                                 </Col>
                                 <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '2' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>2</Text>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '2' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>2</Text>
                                     </Button>
                                 </Col>
                                 <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '3' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>3</Text>
-                                    </Button>
-                                </Col>
-                            </Row>
-                            <Text>{ '\n' }</Text>
-                            <Row style={ { alignItems: 'center', left: 30, right: 30 } }>
-                                <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '4' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>4</Text>
-                                    </Button>
-                                </Col>
-                                <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '5' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>5</Text>
-                                    </Button>
-                                </Col>
-                                <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '6' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>6</Text>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '3' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>3</Text>
                                     </Button>
                                 </Col>
                             </Row>
                             <Text>{ '\n' }</Text>
                             <Row style={ { alignItems: 'center', left: 30, right: 30 } }>
                                 <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '7' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>7</Text>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '4' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>4</Text>
                                     </Button>
                                 </Col>
                                 <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '8' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>8</Text>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '5' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>5</Text>
                                     </Button>
                                 </Col>
                                 <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '9' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>9</Text>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '6' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>6</Text>
+                                    </Button>
+                                </Col>
+                            </Row>
+                            <Text>{ '\n' }</Text>
+                            <Row style={ { alignItems: 'center', left: 30, right: 30 } }>
+                                <Col size={ 0.3 }>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '7' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>7</Text>
+                                    </Button>
+                                </Col>
+                                <Col size={ 0.3 }>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '8' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>8</Text>
+                                    </Button>
+                                </Col>
+                                <Col size={ 0.3 }>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '9' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>9</Text>
                                     </Button>
                                 </Col>
                             </Row>
@@ -168,8 +170,8 @@ export default class LoginScreen extends React.Component {
                             <Row style={ { alignItems: 'center', left: 30, right: 30 } }>
                                 <Col size={ 0.3 }></Col>
                                 <Col size={ 0.3 }>
-                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '0' } ) } style={ { backgroundColor: '#f27e95', height: 80, width: 80, justifyContent: 'center' } }>
-                                        <Text style={ { fontSize: 50 } }>0</Text>
+                                    <Button rounded onPress={ () => this.setState( { code: this.state.code + '0' } ) } style={ { backgroundColor: '#fff', height: 80, width: 80, justifyContent: 'center' } }>
+                                        <Text style={ { fontSize: 50, color: '#4b3854ff' } }>0</Text>
                                     </Button>
                                 </Col>
                                 <Col size={ 0.3 }></Col>
@@ -177,19 +179,21 @@ export default class LoginScreen extends React.Component {
                             <Text>{ '\n' }</Text>
                             <Row>
                                 <Col>
-                                    <Button rounded block style={ { backgroundColor: '#f27e95', width: '80%', alignSelf: 'center' } } onPress={ () => {
-                                        this.setState( { switchValidate: false, code: '' } );
+                                    <Button rounded block style={ { backgroundColor: '#4b3854ff', width: '80%', alignSelf: 'center' } } onPress={ () => {
+                                        this.setState( { isLoading: true } );
+                                        Configuration.newAlert( 3, 'Tunggu hingga 1 menit untuk login ulang', 10000, "bottom" );
                                         setTimeout( () => {
                                             AsyncStorage.clear();
-                                            Configuration.newAlert( 3, 'Tunggu hingga 1 menit untuk login ulang', 5000, "bottom" );
+                                            this.setState( { switchValidate: false, code: '' } );
+                                            this.setState( { isLoading: false } );
                                         }, 10000 );
-                                    } }>
+                                    } } >
                                         <Icon type='AntDesign' name='back' size={ 25 } color='#fff' />
                                         <Text>Back</Text>
                                     </Button>
                                 </Col>
                                 <Col>
-                                    <Button rounded block style={ { backgroundColor: '#f27e95', width: '80%', alignSelf: 'center' } } onPress={ this.goToHome.bind( this ) }>
+                                    <Button rounded block style={ { backgroundColor: '#4b3854ff', width: '80%', alignSelf: 'center' } } onPress={ this.goToHome.bind( this ) }>
                                         <Icon type='AntDesign' name='login' size={ 25 } color='#fff' />
                                         <Text>Submit</Text>
                                     </Button>
@@ -203,7 +207,7 @@ export default class LoginScreen extends React.Component {
             return (
                 <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } }>
                     <ScrollView>
-                        <Container style={ { backgroundColor: '#f27e95' } }>
+                        <Container style={ { backgroundColor: '#fff' } }>
                             <Content contentContainerStyle={ { flex: 1, top: 20 } }>
                                 <Image source={ require( '../assets/images/icon.png' ) } style={ {
                                     height: 150,
@@ -214,14 +218,14 @@ export default class LoginScreen extends React.Component {
                                 <Form style={ [ Styles.alignItemCenter, { top: 100, alignItems: 'center' } ] }>
                                     <Item rounded style={ { width: '80%', alignSelf: 'center', backgroundColor: '#fff' } }>
                                         <Icon active type='EvilIcons' name='user' />
-                                        <Input style={ { color: '#f27e95' } } placeholderTextColor='#f27e95' placeholder='Username' value={ this.state.username } onChangeText={ ( username ) => this.setState( { username } ) } />
+                                        <Input style={ { color: '#4b3854ff' } } placeholderTextColor='#4b3854ff' placeholder='Username' value={ this.state.username } onChangeText={ ( username ) => this.setState( { username } ) } />
                                     </Item>
                                     <Item rounded style={ { width: '80%', alignSelf: 'center', backgroundColor: '#fff', top: 30 } }>
                                         <Icon active type='MaterialCommunityIcons' name='textbox-password' />
-                                        <Input style={ { color: '#f27e95' } } placeholderTextColor='#f27e95' placeholder='Password' value={ this.state.password } onChangeText={ ( password ) => this.setState( { password } ) } secureTextEntry={ true } onSubmitEditing={ this.setSwitchValidate.bind( this ) } />
+                                        <Input style={ { color: '#4b3854ff' } } placeholderTextColor='#4b3854ff' placeholder='Password' value={ this.state.password } onChangeText={ ( password ) => this.setState( { password } ) } secureTextEntry={ true } onSubmitEditing={ this.setSwitchValidate.bind( this ) } />
                                     </Item>
                                 </Form>
-                                <Button rounded block style={ { top: 200, backgroundColor: '#f27e95', width: '80%', alignSelf: 'center' } } onPress={ this.setSwitchValidate.bind( this ) }>
+                                <Button rounded block style={ { top: 200, backgroundColor: '#4b3854ff', width: '80%', alignSelf: 'center' } } onPress={ this.setSwitchValidate.bind( this ) }>
                                     <Icon type='AntDesign' name='login' size={ 25 } color='#fff' />
                                     <Text>Login</Text>
                                 </Button>

@@ -118,7 +118,7 @@ export default class OvoScreen extends React.Component {
             if ( data.Status == 0 ) {
                 this.setState( { switchView: true, dataRequest: data } );
             } else if ( data.Status == 1 ) {
-                Config.prototype.newAlert( 3, data.Pesan, 10000, "top" );
+                Config.prototype.newAlert( 3, data.Pesan, 10000, 'top' );
                 this.setState( { switchView: false } );
             } else {
                 AsyncStorage.clear();
@@ -126,9 +126,9 @@ export default class OvoScreen extends React.Component {
                 this.props.navigation.navigate( 'Login' );
             }
         } else if ( this.state.phone.length < 10 ) {
-            Config.prototype.newAlert( 2, 'Nomoar Telfon yang anda inputkan kurang dari 10 digit', 10000, "top" );
+            Config.prototype.newAlert( 2, 'Nomoar Telfon yang anda inputkan kurang dari 10 digit', 10000, 'top' );
         } else {
-            Config.prototype.newAlert( 3, 'Provider tidak di temukan', 10000, "top" );
+            Config.prototype.newAlert( 3, 'Provider tidak di temukan', 10000, 'top' );
         }
         this.setState( { isLoading: false } );
     }
@@ -154,11 +154,11 @@ export default class OvoScreen extends React.Component {
                 phone: '',
                 typeNumberName: null,
             } );
-            Config.prototype.newAlert( 1, data.Pesan, 10000, "top" );
+            Config.prototype.newAlert( 1, data.Pesan, 10000, 'top' );
             this.setState( { switchView: false } );
             this.componentDidMount();
         } else if ( data.Status == 1 ) {
-            Config.prototype.newAlert( 2, data.Pesan, 10000, "top" );
+            Config.prototype.newAlert( 2, data.Pesan, 10000, 'top' );
             this.setState( { switchView: false } );
         } else {
             AsyncStorage.clear();
@@ -239,9 +239,9 @@ export default class OvoScreen extends React.Component {
     render () {
         if ( this.state.isLoading ) {
             return (
-                <View style={ [ Styles.container, { backgroundColor: '#f27e95' } ] }>
+                <View style={ [ Styles.container, { backgroundColor: '#ffffffff' } ] }>
                     <View style={ [ Styles.container, Styles.justifyContentCenter ] }>
-                        <Spinner color='#fff' />
+                        <Spinner color='#4b3854ff' />
                     </View>
                 </View>
             );
@@ -251,14 +251,14 @@ export default class OvoScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#f27e95' } } >
+                            <Header style={ { backgroundColor: '#ffffffff' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
-                                        <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
+                                        <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#ffffffff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>OVO</Title>
+                                    <Title style={ { color: '#4b3854ff' } }>OVO</Title>
                                 </Body>
 
                             </Header>
@@ -329,14 +329,14 @@ export default class OvoScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#f27e95' } } >
+                            <Header style={ { backgroundColor: '#ffffff' } } >
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
-                                        <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#fff' } } />
+                                        <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#4b3854ff' } } />
                                     </Button>
                                 </Body>
                                 <Body style={ { alignItems: 'center' } }>
-                                    <Title>OVO</Title>
+                                    <Title style={ { color: '#4b3854ff' } }>OVO</Title>
                                 </Body>
 
                             </Header>
