@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Linking } from 'react-native';
+import { View, Linking , StatusBar } from 'react-native';
 import {
     Spinner,
     Tab,
@@ -19,7 +19,6 @@ import {
 import Header from '../navigation/HeaderNavigationBar';
 import Styles from '../constants/Styles';
 import HomeTab from './tab/HomeTab';
-import FinancialScreen from './FinancialScreen';
 
 export default class HomeScreen extends React.Component {
     constructor ( props ) {

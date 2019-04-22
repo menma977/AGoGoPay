@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, AsyncStorage, BackHandler } from 'react-native';
+import { KeyboardAvoidingView, AsyncStorage, BackHandler , StatusBar } from 'react-native';
 import {
     Container,
     Content,

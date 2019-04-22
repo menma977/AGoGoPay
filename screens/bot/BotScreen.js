@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, AsyncStorage, BackHandler, KeyboardAvoidingView } from 'react-native';
+import { View, AsyncStorage, BackHandler, KeyboardAvoidingView , StatusBar } from 'react-native';
 import {
     Spinner,
     Container,
@@ -162,7 +162,7 @@ export default class BotScreen extends React.Component {
                                 <Text>BOT</Text>
                             </Button>
                             <Card>
-                                <CardItem header style={ { backgroundColor: '#f27e95' } }>
+                                <CardItem header style={ { backgroundColor: '#4b3854ff' } }>
                                     <Body>
                                         <Title>Manual</Title>
                                     </Body>
@@ -181,7 +181,7 @@ export default class BotScreen extends React.Component {
                                                 formatLabel={ value => `${ value }` }
                                             />
                                             <Col>
-                                                <LineChart style={ { minHeight: 200, flex: 1 } } data={ data } svg={ { stroke: '#f27e95' } }
+                                                <LineChart style={ { minHeight: 200, flex: 1 } } data={ data } svg={ { stroke: '#4b3854ff' } }
                                                     contentInset={ { top: 30, bottom: 30 } } curve={ shape.curveLinear }>
                                                     <Grid svg={ { stroke: '#F9B3C3' } } />
                                                 </LineChart>

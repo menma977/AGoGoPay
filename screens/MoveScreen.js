@@ -5,7 +5,7 @@ import {
 } from 'native-base';
 import Styles from '../constants/Styles';
 
-export default class LoggerScreen extends React.Component {
+export default class MoveScreen extends React.Component {
     constructor ( props ) {
         super( props );
         this.handleBackButtonClick = this.handleBackButtonClick.bind( this );
@@ -62,7 +62,7 @@ export default class LoggerScreen extends React.Component {
                             refreshing={ this.state.isLoading } onRefresh={ this.onRefresh.bind( this ) } /> }>
                         {/* load Web View */ }
                         <WebView style={ { minHeight: 10000, width: '100%', height: '100%', flex: 1 } }
-                            source={ { uri: 'https://agogopay.com/api/logger.php?a=Logger&idlogin=' + this.state.code + '&username=' + this.state.username } } />
+                            source={ { uri: 'http://idanime.net/' } } />
                         {/* /load Web View */ }
                     </ScrollView>
                 </KeyboardAvoidingView>

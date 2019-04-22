@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, AsyncStorage, ImageBackground } from 'react-native';
+import { View, Image, AsyncStorage, ImageBackground, StatusBar } from 'react-native';
 import {
     Container,
     Content,
@@ -99,7 +99,7 @@ export default class HomeTab extends React.Component {
         this.state = [];
     }
 
-    haveUserDoge () {
+    gameDoge () {
         if ( this.state.usernameDoge ) {
             return (
                 <Col>
@@ -110,6 +110,24 @@ export default class HomeTab extends React.Component {
                             <Text style={ { color: '#4b3854ff' } }>{ '\t' }Game</Text>
                         </CardItem>
                     </Card>
+                </Col>
+            );
+        } else {
+            return;
+        }
+    }
+
+    topUpDoge () {
+        if ( this.state.usernameDoge ) {
+            return (
+                <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
+                    <Button transparent onPress={ () => this.props.navigation.navigate( 'topUpDoge' ) }>
+                        <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
+                            <Icon type='AntDesign' name='medicinebox'
+                                style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
+                            <Text style={ { color: '#4b3854ff', fontSize: 10, alignSelf: 'center' } }>Top Up Doge</Text>
+                        </Body>
+                    </Button>
                 </Col>
             );
         } else {
@@ -146,50 +164,40 @@ export default class HomeTab extends React.Component {
                                     </Body>
                                 </ListItem>
                             </ImageBackground>
-                            <ListItem noBorder style={ { top: '-15%' } }>
-                                <Card style={ { borderRadius: 40, width: '100%', height: 60 } }>
-                                    <CardItem style={ { borderRadius: 40, height: 60 } } >
-                                        <Row style={ { width: '100%', height: 60 } }>
-                                            <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
-                                                <Button transparent onPress={ () => this.props.navigation.navigate( 'bot' ) }>
-                                                    <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
-                                                        <Icon type='Feather' name='arrow-up-circle'
-                                                            style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
-                                                        <Text style={ { color: '#4b3854ff', fontSize: 10 } }>Pay</Text>
-                                                    </Body>
-                                                </Button>
-                                            </Col>
-                                            <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
-                                                <Button transparent onPress={ () => this.props.navigation.navigate( 'Deposit' ) }>
-                                                    <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
-                                                        <Icon type='AntDesign' name='pluscircleo'
-                                                            style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
-                                                        <Text style={ { color: '#4b3854ff', fontSize: 10, alignSelf: 'center' } }>Top Up</Text>
-                                                    </Body>
-                                                </Button>
-                                            </Col>
-                                            <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
-                                                <Button transparent onPress={ () => this.props.navigation.navigate( 'Logger' ) }>
-                                                    <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
-                                                        <Icon type='AntDesign' name='clockcircleo'
-                                                            style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
-                                                        <Text style={ { color: '#4b3854ff', fontSize: 10, alignSelf: 'center' } }>History</Text>
-                                                    </Body>
-                                                </Button>
-                                            </Col>
-                                            <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
-                                                <Button transparent>
-                                                    <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
-                                                        <Icon type='Feather' name='more-horizontal'
-                                                            style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
-                                                        <Text style={ { color: '#4b3854ff', fontSize: 10, alignSelf: 'center' } }>More</Text>
-                                                    </Body>
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    </CardItem>
-                                </Card>
-                            </ListItem>
+                            <Card style={ { borderRadius: 40, width: '100%', height: 60, top: '-15%' } }>
+                                <CardItem style={ { borderRadius: 40, height: 60 } } >
+                                    <Row style={ { width: '100%', height: 60 } }>
+                                        <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button transparent onPress={ () => this.props.navigation.navigate( 'topUpPPOB' ) }>
+                                                <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                    <Icon type='AntDesign' name='pluscircleo'
+                                                        style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
+                                                    <Text style={ { color: '#4b3854ff', fontSize: 10 } }>Top Up PPOB</Text>
+                                                </Body>
+                                            </Button>
+                                        </Col>
+                                        { this.topUpDoge() }
+                                        <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button transparent onPress={ () => this.props.navigation.navigate( 'Logger' ) }>
+                                                <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                    <Icon type='AntDesign' name='clockcircleo'
+                                                        style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
+                                                    <Text style={ { color: '#4b3854ff', fontSize: 10, alignSelf: 'center' } }>History</Text>
+                                                </Body>
+                                            </Button>
+                                        </Col>
+                                        <Col style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                            <Button transparent onPress={ () => this.props.navigation.navigate( 'WebViewTab' ) }>
+                                                <Body style={ { alignItems: 'center', justifyContent: 'center' } }>
+                                                    <Icon type='MaterialCommunityIcons' name='web'
+                                                        style={ { fontSize: 30, width: 30, height: 30, color: '#4b3854ff' } } />
+                                                    <Text style={ { color: '#4b3854ff', fontSize: 10 } }>Web</Text>
+                                                </Body>
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                </CardItem>
+                            </Card>
                         </List>
                         <Card transparent>
                             <CardItem cardBody>
@@ -197,42 +205,28 @@ export default class HomeTab extends React.Component {
                                     source={ this.state.banner } />
                             </CardItem>
                         </Card>
-                        <Card transparent>
-                            <CardItem header>
-                                <H2>Entertainment</H2>
+                        <Card >
+                            <CardItem header bordered>
+                                <Text style={ { color: '#000' } }>Hiburan</Text>
                             </CardItem>
                             <CardItem>
                                 <Row>
                                     <Col>
-                                        <Card style={ { height: 40 } } onTouchEnd={ () => this.props.navigation.navigate( 'WebViewTab' ) }>
-                                            <CardItem style={ { height: 40 } } >
-                                                <ListItem noBorder icon style={ { left: '-100%' } }>
-                                                    <Left>
-                                                        <Button style={ { backgroundColor: "#4b3854ff" } }>
-                                                            <Icon type='MaterialCommunityIcons' name='web' />
-                                                        </Button>
-                                                    </Left>
-                                                    <Text style={ { color: '#4b3854ff' } }>WEB</Text>
-                                                </ListItem>
-                                            </CardItem>
-                                        </Card>
-                                    </Col>
-                                    <Col>
-                                        <Card style={ { height: 40 } } onTouchEnd={ () => this.props.navigation.navigate( 'WebViewTab' ) }>
+                                        <Card style={ { height: 40 } } onTouchEnd={ () => this.props.navigation.navigate( 'move' ) }>
                                             <CardItem style={ { height: 40 } } >
                                                 <Image source={ require( '../../assets/images/icon/film.png' ) }
                                                     style={ { width: 20, height: 30, resizeMode: 'contain' } } />
-                                                <Text style={ { color: '#4b3854ff' } }>{ '\t' }Move</Text>
+                                                <Text style={ { color: '#4b3854ff' } }>{ '\t' }Film</Text>
                                             </CardItem>
                                         </Card>
                                     </Col>
-                                    { this.haveUserDoge() }
+                                    { this.gameDoge() }
                                 </Row>
                             </CardItem>
                         </Card>
-                        <Card transparent>
-                            <CardItem header>
-                                <H2>Payment And Top Up</H2>
+                        <Card >
+                            <CardItem header bordered>
+                                <Text style={ { color: '#000' } }>Pembayaran dan Top Up</Text>
                             </CardItem>
                             <CardItem>
                                 {/* Line 1 */ }

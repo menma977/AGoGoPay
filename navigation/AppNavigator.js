@@ -24,11 +24,13 @@ import MartinAngelScreen from '../screens/bot/MartinAngelScreen';
 import LabouchereScreen from '../screens/bot/LabouchereScreen';
 import MartinAngelBot from '../screens/bot/MartinAngelBot';
 import LabouchereBot from '../screens/bot/LabouchereBot';
-import DepositScreen from '../screens/DepositScreen';
 import PulsePascaScreen from '../screens/PulsePascaScreen';
 import PDAMScreen from '../screens/PDAMScreen';
 import MultyFScreen from '../screens/MultyFScreen';
 import InusernScreen from '../screens/InusernScreen';
+import TopUpPPOBScreen from '../screens/TopUopPPOBScreen';
+import TopUpDogeScreen from '../screens/TopUpDogeScreen';
+import MoveScreen from '../screens/MoveScreen';
 
 export default createAppContainer( createSwitchNavigator( {
   // You could add another route here for authentication.
@@ -39,11 +41,13 @@ export default createAppContainer( createSwitchNavigator( {
   WebViewTab: WebViewTab,
   Logger: LoggerScreen,
   Financial: FinancialScreen,
-  Deposit: DepositScreen,
+  topUpPPOB: TopUpPPOBScreen,
+  topUpDoge: TopUpDogeScreen,
   bot: BotScreen,
   martinAngel: MartinAngelScreen,
   fibonacci: FibonacciScreen,
   labouchere: LabouchereScreen,
+  move: MoveScreen,
 
   fibonacciBot: FibonacciBot,
   martinAngelBot: MartinAngelBot,

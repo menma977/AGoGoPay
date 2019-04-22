@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, AsyncStorage, BackHandler, KeyboardAvoidingView, Clipboard, ToastAndroid } from 'react-native';
+import { View, AsyncStorage, BackHandler, KeyboardAvoidingView, Clipboard, ToastAndroid , StatusBar } from 'react-native';
 import {
     Spinner,
     Container,
@@ -24,7 +24,7 @@ import Header from '../navigation/HeaderNavigationBar';
 import Styles from '../constants/Styles';
 import DepositWithdrawController from '../components/controller/DepositWithdrawController';
 import Config from '../components/model/Config';
-export default class DepositScreen extends React.Component {
+export default class TopUpDogeScreen extends React.Component {
     constructor ( props ) {
         super( props );
         this.handleBackButtonClick = this.handleBackButtonClick.bind( this );
@@ -64,20 +64,6 @@ export default class DepositScreen extends React.Component {
     handleBackButtonClick () {
         this.props.navigation.navigate( 'Home' );
         return true;
-    }
-
-    async depositPPOB () {
-        this.setState( { isLoading: true } );
-        let setUsername = this.state.username;
-        let setCodeLogin = this.state.code;
-        let setNominal = this.state.nominal;
-        let data = await DepositWithdrawController.prototype.depositPPOB( setUsername, setCodeLogin, setNominal );
-        if ( data.Status == 0 ) {
-            Config.prototype.newAlert( 1, data.Pesan, 10000, 'top' );
-        } else {
-            Config.prototype.newAlert( 2, data.Pesan, 10000, 'top' );
-        }
-        this.setState( { isLoading: false } );
     }
 
     async sendEmailCode () {
@@ -125,12 +111,12 @@ export default class DepositScreen extends React.Component {
         if ( this.state.switchWDDoge ) {
             return (
                 <Card>
-                    <CardItem header style={ { backgroundColor: '#f27e95' } }>
+                    <CardItem header style={ { backgroundColor: '#ffffffff' } }>
                         <Body>
-                            <Title>Code Unik</Title>
+                            <Title style={ { color: '#4b3854ff' } }>Code Unik</Title>
                         </Body>
                         <Right>
-                            <Title>{ this.state.username }</Title>
+                            <Title style={ { color: '#4b3854ff' } }>{ this.state.username }</Title>
                         </Right>
                     </CardItem>
                     <CardItem>
@@ -141,10 +127,20 @@ export default class DepositScreen extends React.Component {
                                     onChangeText={ ( codeDoge ) => this.setState( { codeDoge } ) } />
                             </Item>
                             <Text>{ '\n' }</Text>
-                            <Button rounded block success style={ { width: '90%', alignSelf: 'center' } }
-                                onPress={ this.finalWD.bind( this ) } >
-                                <Text>Kirim Code</Text>
-                            </Button>
+                            <Row>
+                                <Col>
+                                    <Button rounded block warning style={ { width: '90%', alignSelf: 'center' } }
+                                        onPress={ () => this.setState( { switchWDDoge: false } ) } >
+                                        <Text>Kembali</Text>
+                                    </Button>
+                                </Col>
+                                <Col>
+                                    <Button rounded block success style={ { width: '90%', alignSelf: 'center' } }
+                                        onPress={ this.finalWD.bind( this ) } >
+                                        <Text>Kirim Code</Text>
+                                    </Button>
+                                </Col>
+                            </Row>
                         </Body>
                     </CardItem>
                 </Card>
@@ -152,19 +148,19 @@ export default class DepositScreen extends React.Component {
         } else {
             return (
                 <Card>
-                    <CardItem header style={ { backgroundColor: '#f27e95' } }>
+                    <CardItem header style={ { backgroundColor: '#ffffffff' } }>
                         <Body>
-                            <Title>Withdraw DOGE</Title>
+                            <Title style={ { color: '#4b3854ff' } }>Withdraw DOGE</Title>
                         </Body>
                         <Right>
-                            <Title>{ this.state.username }</Title>
+                            <Title style={ { color: '#4b3854ff' } }>{ this.state.username }</Title>
                         </Right>
                     </CardItem>
                     <CardItem>
                         <Body>
                             <Item floatingLabel>
                                 <Label>Wallet Anda</Label>
-                                <Input keyboardType='number-pad' defaultValue={ this.state.walletUser }
+                                <Input defaultValue={ this.state.walletUser }
                                     onChangeText={ ( walletUser ) => this.setState( { walletUser } ) } />
                             </Item>
                             <Text>{ '\n' }</Text>
@@ -201,35 +197,12 @@ export default class DepositScreen extends React.Component {
                         <Header { ...this.props } name='AGOGOPAY' />
                         <Content padder>
                             <Card>
-                                <CardItem header style={ { backgroundColor: '#f27e95' } }>
+                                <CardItem header style={ { backgroundColor: '#ffffffff' } }>
                                     <Body>
-                                        <Title>Deposit PPOB</Title>
+                                        <Title style={ { color: '#4b3854ff' } }>Deposit DOGE</Title>
                                     </Body>
                                     <Right>
-                                        <Title>{ this.state.username }</Title>
-                                    </Right>
-                                </CardItem>
-                                <CardItem>
-                                    <Body>
-                                        <Item floatingLabel>
-                                            <Label>Nominal</Label>
-                                            <Input keyboardType='number-pad' value={ this.state.nominal } onChangeText={ ( nominal ) => { this.setState( { nominal } ) } } />
-                                        </Item>
-                                        <Text>{ '\n' }</Text>
-                                        <Button rounded block success style={ { width: '90%', alignSelf: 'center' } }
-                                            disabled={ this.state.nominal ? false : true } onPress={ this.depositPPOB.bind( this ) }>
-                                            <Text>Proses Deposit</Text>
-                                        </Button>
-                                    </Body>
-                                </CardItem>
-                            </Card>
-                            <Card>
-                                <CardItem header style={ { backgroundColor: '#f27e95' } }>
-                                    <Body>
-                                        <Title>Deposit DOGE</Title>
-                                    </Body>
-                                    <Right>
-                                        <Title>{ this.state.username }</Title>
+                                        <Title style={ { color: '#4b3854ff' } }>{ this.state.username }</Title>
                                     </Right>
                                 </CardItem>
                                 <CardItem>

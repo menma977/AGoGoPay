@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, WebView, KeyboardAvoidingView, BackHandler } from 'react-native';
+import { View, WebView, KeyboardAvoidingView, BackHandler , StatusBar } from 'react-native';
 import {
     Spinner,
 } from 'native-base';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, KeyboardAvoidingView, AsyncStorage, BackHandler, Image } from 'react-native';
+import { View, KeyboardAvoidingView, AsyncStorage, BackHandler, Image, StatusBar } from 'react-native';
 import {
     Spinner,
     Body,
@@ -439,7 +439,8 @@ export default class PulseScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#ffffffff' } } >
+                            <Header style={ { backgroundColor: '#fff', height: 70 } } >
+                                <StatusBar barStyle='dark-content' />
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
                                         <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#4b3854ff' } } />
@@ -516,7 +517,8 @@ export default class PulseScreen extends React.Component {
                     <KeyboardAvoidingView behavior="padding" style={ { flex: 1 } } >
                         {/* set keyboard avoid view */ }
                         <Container>
-                            <Header style={ { backgroundColor: '#ffffffff' } } >
+                            <Header style={ { backgroundColor: '#fff', height: 70 } } >
+                                <StatusBar barStyle='dark-content' />
                                 <Body style={ { alignItems: 'flex-start' } }>
                                     <Button transparent onPress={ () => this.props.navigation.navigate( 'Home' ) } style={ { alignSelf: 'flex-start' } }>
                                         <Icon active type='Ionicons' name='ios-arrow-back' size={ 20 } style={ { color: '#4b3854ff' } } />

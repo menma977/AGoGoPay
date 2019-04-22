@@ -11,7 +11,7 @@ export default class HeaderNavigationBar extends Component {
 
   render () {
     return (
-      <Header style={ { backgroundColor: '#fff', top: 5 } } hasTabs >
+      <Header style={ { backgroundColor: '#fff', top: 15, height: 70 } } hasTabs >
         <StatusBar barStyle='dark-content' />
         <Body style={ { alignItems: 'flex-start' } }>
           <Image source={ require( '../assets/images/icon/logo.png' ) }

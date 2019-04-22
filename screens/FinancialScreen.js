@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, WebView, KeyboardAvoidingView, BackHandler, AsyncStorage, RefreshControl, ScrollView } from 'react-native';
+import { View, WebView, KeyboardAvoidingView, BackHandler, AsyncStorage, RefreshControl, ScrollView , StatusBar } from 'react-native';
 import {
     Spinner, Card, CardItem,
 } from 'native-base';

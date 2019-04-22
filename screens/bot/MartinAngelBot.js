@@ -12,7 +12,7 @@ import {
     Button,
     Label
 } from 'native-base';
-import { ProgressBarAndroid } from 'react-native';
+import { ProgressBarAndroid , StatusBar } from 'react-native';
 import MartinAngel from '../../components/model/MartinAngel';
 import { LineChart, YAxis, Grid } from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
@@ -272,7 +272,7 @@ export default class MartinAngelBot extends React.Component {
                                             formatLabel={ value => `${ value }` }
                                         />
                                         <Col>
-                                            <LineChart style={ { minHeight: 200, flex: 1 } } data={ data } svg={ { stroke: '#f27e95' } }
+                                            <LineChart style={ { minHeight: 200, flex: 1 } } data={ data } svg={ { stroke: '#4b3854ff' } }
                                                 contentInset={ { top: 30, bottom: 30 } } curve={ shape.curveLinear }>
                                                 <Grid svg={ { stroke: '#F9B3C3' } } />
                                             </LineChart>
